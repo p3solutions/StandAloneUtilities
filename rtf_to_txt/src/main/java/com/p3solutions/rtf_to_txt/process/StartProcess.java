@@ -1,6 +1,10 @@
 package com.p3solutions.rtf_to_txt.process;
 
 import com.p3solutions.rtf_to_txt.beans.InputBean;
+import org.apache.tika.Tika;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -57,7 +61,7 @@ public class StartProcess {
                         new File(inputBean.getInputPath() + File.separator + "processedFile"+File.separator).mkdir();
                         Files.move(f.toPath(), Paths.get(inputBean.getInputPath() + File.separator + "processedFile"+File.separator+f.getName()), StandardCopyOption.REPLACE_EXISTING);
                         System.out.println("processed " + f.getName());
-                    } catch (XMLStreamException | IOException | BadLocationException e) {
+                    } catch (XMLStreamException | IOException | BadLocationException | TikaException e) {
                         e.printStackTrace();
                         System.out.println("Failed to process " + f.getName() + "Excepion.." + e.getMessage());
                     }
@@ -76,7 +80,7 @@ public class StartProcess {
         }
     }
 
-    private void processXml(File f) throws XMLStreamException, IOException, BadLocationException {
+    private void processXml(File f) throws XMLStreamException, IOException, BadLocationException, TikaException {
 
         new File(inputBean.getOutputPath() + File.separator).mkdir();
 
@@ -120,12 +124,11 @@ public class StartProcess {
                 case XMLStreamConstants.CHARACTERS:
                     Characters characters = event.asCharacters();
                     if (rtfFlag) {
-                        RTFEditorKit rtfParser = new RTFEditorKit();
-                        Document document = rtfParser.createDefaultDocument();
-                        rtfParser.read(new ByteArrayInputStream(characters.getData().toString().getBytes()), document,
-                                0);
-                        String text = document.getText(0, document.getLength());
-                        fileWriter.write(text);
+                        Tika tika = new Tika();
+                        Metadata metadata = new Metadata();
+                        InputStream stream = TikaInputStream.get(characters.getData().toString().getBytes(), metadata);
+                        String filecontent = tika.parseToString(stream,metadata);
+                        fileWriter.write(filecontent);
                     } else {
                         fileWriter.write(characters.getData());
 
