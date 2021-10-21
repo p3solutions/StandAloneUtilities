@@ -18,6 +18,7 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -76,7 +77,19 @@ public class StartProcess {
                 e.printStackTrace();
             }
 
+            sleeper();
 
+
+        }
+    }
+
+    private void sleeper() {
+        while (counter != 0) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -110,6 +123,7 @@ public class StartProcess {
                             fileWriter.write("<" + startValue + " " + attribute + ">");
                             break;
                         case "TEXT_DATA":
+                        case "TEXT_DATA_LONG":
                             fileWriter.write("<" + startValue + ">");
                             rtfFlag = true;
                             break;
@@ -126,6 +140,7 @@ public class StartProcess {
                     if (rtfFlag) {
                         Tika tika = new Tika();
                         Metadata metadata = new Metadata();
+                        metadata.add(Metadata.CONTENT_ENCODING, StandardCharsets.UTF_8.name());
                         InputStream stream = TikaInputStream.get(characters.getData().toString().getBytes(), metadata);
                         String filecontent = tika.parseToString(stream,metadata);
                         fileWriter.write(filecontent);
@@ -141,6 +156,7 @@ public class StartProcess {
                     String endValue = endElement.getName().getLocalPart();
                     switch (endValue) {
                         case "TEXT_DATA":
+                        case "TEXT_DATA_LONG":
                             rtfFlag = false;
                             fileWriter.write("</" + endValue + ">");
                             break;
