@@ -143,7 +143,7 @@ public class StartProcess {
                         metadata.add(Metadata.CONTENT_ENCODING, StandardCharsets.UTF_8.name());
                         InputStream stream = TikaInputStream.get(characters.getData().toString().getBytes(), metadata);
                         String filecontent = tika.parseToString(stream,metadata);
-                        fileWriter.write(filecontent);
+                        fileWriter.write(filecontent.replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;"));
                     } else {
                         fileWriter.write(characters.getData());
 

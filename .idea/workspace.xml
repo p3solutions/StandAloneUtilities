@@ -72,6 +72,17 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="JetRunConfigurationType">
       <module name="StandAloneUtilities" />
       <option name="VM_PARAMETERS" />
@@ -148,7 +159,7 @@
       <updated>1634528751134</updated>
       <workItem from="1634528753615" duration="31359000" />
       <workItem from="1634637456834" duration="98000" />
-      <workItem from="1634781372029" duration="877000" />
+      <workItem from="1634781372029" duration="1588000" />
     </task>
     <servers />
   </component>
