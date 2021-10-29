@@ -101,7 +101,7 @@ public class StartProcess {
 
         File of = new File(inputBean.getOutputPath() + File.separator + f.getName());
         of.createNewFile();
-        Writer fileWriter = new FileWriter(of);
+        Writer fileWriter = new FileWriter(of,StandardCharsets.UTF_8);
         fileWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         XMLInputFactory factory = XMLInputFactory.newInstance();
         InputStream file = new FileInputStream(f);
@@ -141,7 +141,7 @@ public class StartProcess {
                         Tika tika = new Tika();
                         Metadata metadata = new Metadata();
                         metadata.add(Metadata.CONTENT_ENCODING, StandardCharsets.UTF_8.name());
-                        InputStream stream = TikaInputStream.get(characters.getData().toString().getBytes(), metadata);
+                        InputStream stream = TikaInputStream.get(characters.getData().toString().getBytes(StandardCharsets.UTF_8.name()), metadata);
                         String filecontent = tika.parseToString(stream,metadata);
                         fileWriter.write(filecontent.replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;"));
                     } else {
