@@ -5,6 +5,7 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/rtf_to_txt/pom.xml" />
+        <option value="$PROJECT_DIR$/jdbc_parallel_connection_check/pom.xml" />
       </list>
     </option>
   </component>

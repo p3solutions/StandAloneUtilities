@@ -7,15 +7,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="rtf_to_txt" />
+        <module name="jdbc_parallel_connection_check" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="archon_rtf_to_txt" target="11" />
-      <module name="StandAloneUtilities" target="11" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="jdbc_parallel_connection_check" options="-parameters" />
       <module name="rtf_to_txt" options="-parameters" />
     </option>
   </component>

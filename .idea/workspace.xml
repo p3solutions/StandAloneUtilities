@@ -5,7 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6dde3ac1-0f53-4105-af67-051a0bc573e6" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/jdbc_parallel_connection_check/src/main/java/com/p3solutions/jdbc_parallel_connection_check/beans/InputBean.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdbc_parallel_connection_check/src/main/java/com/p3solutions/jdbc_parallel_connection_check/connection/ConnectionPool.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdbc_parallel_connection_check/src/main/java/com/p3solutions/jdbc_parallel_connection_check/connection/JDBCConnection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdbc_parallel_connection_check/src/main/java/com/p3solutions/jdbc_parallel_connection_check/connection/JDBCConnector.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdbc_parallel_connection_check/src/main/java/com/p3solutions/jdbc_parallel_connection_check/process/StartProcess.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdbc_parallel_connection_check/src/main/java/utils/BinaryData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdbc_parallel_connection_check/src/main/java/utils/IdentifiedEnum.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdbc_parallel_connection_check/src/main/java/utils/Utility.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jdbc_parallel_connection_check/src/main/resources/log4j2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/rtf_to_txt/src/main/resources/log4j2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rtf_to_txt/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/rtf_to_txt/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rtf_to_txt/src/main/java/com/p3solutions/rtf_to_txt/process/StartProcess.java" beforeDir="false" afterPath="$PROJECT_DIR$/rtf_to_txt/src/main/java/com/p3solutions/rtf_to_txt/process/StartProcess.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -22,6 +36,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="ProblemsViewState">
     <option name="selectedIndex" value="1" />
@@ -44,27 +66,32 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/rtf_to_txt/src/main/resources" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/jdbc_parallel_connection_check/src/main/resources" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.6045977" />
-    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.repository.indices" />
+    <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.javacompiler" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\Product\Github\StandAloneUtilities\jdbc_parallel_connection_check\src\main\resources" />
       <recent name="E:\Product\Github\StandAloneUtilities\rtf_to_txt\src\main\resources" />
+      <recent name="E:\Product\Github\StandAloneUtilities\jdbc_parallel_connection_check\src\main\java\com\p3solutions\jdbc_parallel_connection_check\connection" />
       <recent name="E:\Product\Github\StandAloneUtilities\rtf_to_txt\lib" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="utils" />
     </key>
   </component>
   <component name="RunManager" selected="Application.RtfToTxtApplication">
-    <configuration name="RtfToTxtApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.p3solutions.rtf_to_txt.RtfToTxtApplication" />
-      <module name="rtf_to_txt" />
-      <option name="PROGRAM_PARAMETERS" value="-ip &quot;E:\Product\Github\CL-Archon_output\RDBMS Extractor\934e7e_20211018&quot; -op &quot;E:\Product\Github\CL-Archon_output\RDBMS Extractor\934e7e_20211018\op&quot; -mpp 3" />
+    <configuration name="JdbcParallelConnectionCheckApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.p3solutions.jdbc_parallel_connection_check.JdbcParallelConnectionCheckApplication" />
+      <module name="jdbc_parallel_connection_check" />
+      <option name="PROGRAM_PARAMETERS" value="-h localhost -l 1433 -u sa -p secret -d R17MB -s dbo -mpp 3" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.p3solutions.rtf_to_txt.*" />
+          <option name="PATTERN" value="com.p3solutions.jdbc_parallel_connection_check.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -72,13 +99,16 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
-      <option name="arquillianRunConfiguration">
-        <value>
-          <option name="containerStateName" value="" />
-        </value>
-      </option>
-      <option name="TEST_OBJECT" value="class" />
+    <configuration name="RtfToTxtApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.p3solutions.rtf_to_txt.RtfToTxtApplication" />
+      <module name="rtf_to_txt" />
+      <option name="PROGRAM_PARAMETERS" value="-ip &quot;C:\Users\91735\Downloads\New folder&quot; -op &quot;C:\Users\91735\Downloads\New folder\op&quot; -mpp 3" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.p3solutions.rtf_to_txt.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -141,11 +171,13 @@
     </configuration>
     <list>
       <item itemvalue="Application.RtfToTxtApplication" />
+      <item itemvalue="Application.JdbcParallelConnectionCheckApplication" />
       <item itemvalue="Spring Boot.RtfToTxtApplication" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.RtfToTxtApplication" />
+        <item itemvalue="Application.JdbcParallelConnectionCheckApplication" />
       </list>
     </recent_temporary>
   </component>
@@ -159,7 +191,11 @@
       <updated>1634528751134</updated>
       <workItem from="1634528753615" duration="31359000" />
       <workItem from="1634637456834" duration="98000" />
-      <workItem from="1634781372029" duration="1588000" />
+      <workItem from="1634781372029" duration="3118000" />
+      <workItem from="1634817768741" duration="3361000" />
+      <workItem from="1634872650732" duration="22593000" />
+      <workItem from="1634905434063" duration="4326000" />
+      <workItem from="1634965582897" duration="5526000" />
     </task>
     <servers />
   </component>
@@ -177,5 +213,21 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/jdbc_parallel_connection_check/src/main/java/com/p3solutions/jdbc_parallel_connection_check/process/StartProcess.java</url>
+          <line>58</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/jdbc_parallel_connection_check/src/main/java/com/p3solutions/jdbc_parallel_connection_check/connection/JDBCConnection.java</url>
+          <line>33</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
