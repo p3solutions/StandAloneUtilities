@@ -34,7 +34,6 @@ public class StartProcess {
         this.inputBean = inputBean;
     }
 
-
     public void start() {
         File file = new File(inputBean.getInputPath());
         File[] listOfFiles = file.listFiles(new FilenameFilter() {
@@ -59,8 +58,8 @@ public class StartProcess {
                     try {
                         System.out.println("processing " + f.getName());
                         processXml(f);
-                        new File(inputBean.getInputPath() + File.separator + "processedFile"+File.separator).mkdir();
-                        Files.move(f.toPath(), Paths.get(inputBean.getInputPath() + File.separator + "processedFile"+File.separator+f.getName()), StandardCopyOption.REPLACE_EXISTING);
+                        new File(inputBean.getInputPath() + File.separator + "processedFile" + File.separator).mkdir();
+                        Files.move(f.toPath(), Paths.get(inputBean.getInputPath() + File.separator + "processedFile" + File.separator + f.getName()), StandardCopyOption.REPLACE_EXISTING);
                         System.out.println("processed " + f.getName());
                     } catch (XMLStreamException | IOException | BadLocationException | TikaException e) {
                         e.printStackTrace();
@@ -70,17 +69,16 @@ public class StartProcess {
                 }
             });
             counter++;
+            System.out.println(t.getName()+" started");
             t.start();
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-            sleeper();
-
-
         }
+        sleeper();
+
     }
 
     private void sleeper() {
@@ -101,12 +99,13 @@ public class StartProcess {
 
         File of = new File(inputBean.getOutputPath() + File.separator + f.getName());
         of.createNewFile();
-        Writer fileWriter = new FileWriter(of,StandardCharsets.UTF_8);
+        Writer fileWriter = new FileWriter(of, StandardCharsets.UTF_8);
         fileWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         XMLInputFactory factory = XMLInputFactory.newInstance();
         InputStream file = new FileInputStream(f);
         InputStreamReader isr = new InputStreamReader(file);
         XMLEventReader eventReader = factory.createXMLEventReader(isr);
+        StringBuffer text = new StringBuffer();
         while (eventReader.hasNext()) {
             XMLEvent event = eventReader.nextEvent();
             switch (event.getEventType()) {
@@ -138,12 +137,8 @@ public class StartProcess {
                 case XMLStreamConstants.CHARACTERS:
                     Characters characters = event.asCharacters();
                     if (rtfFlag) {
-                        Tika tika = new Tika();
-                        Metadata metadata = new Metadata();
-                        metadata.add(Metadata.CONTENT_ENCODING, StandardCharsets.UTF_8.name());
-                        InputStream stream = TikaInputStream.get(characters.getData().toString().getBytes(StandardCharsets.UTF_8.name()), metadata);
-                        String filecontent = tika.parseToString(stream,metadata);
-                        fileWriter.write(filecontent.replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;"));
+                        text.append(characters.getData());
+
                     } else {
                         fileWriter.write(characters.getData());
 
@@ -157,6 +152,30 @@ public class StartProcess {
                     switch (endValue) {
                         case "TEXT_DATA":
                         case "TEXT_DATA_LONG":
+                            if (rtfFlag) {
+                                Tika tika = new Tika();
+                                tika.setMaxStringLength(2147483647);
+                                Metadata metadata = new Metadata();
+                                metadata.add(Metadata.CONTENT_ENCODING, StandardCharsets.UTF_8.name());
+                                InputStream stream = TikaInputStream.get(text.toString().getBytes(StandardCharsets.UTF_8), metadata);
+                                String filecontent = "";
+                                try {
+                                    filecontent = tika.parseToString(stream, metadata);
+                                } catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                    if (e.getCause().getMessage()!=null&&e.getCause().getMessage().contains("Channel not open for writing - cannot extend file to required size")) {
+                                        filecontent = text.toString();
+                                    } else {
+                                        RTFEditorKit rtfParser = new RTFEditorKit();
+                                        Document document = rtfParser.createDefaultDocument();
+                                        rtfParser.read(new ByteArrayInputStream(text.toString().getBytes()), document, 0);
+                                        filecontent = document.getText(0, document.getLength());
+                                    }
+                                }
+                                fileWriter.write(filecontent.replace("&", "&amp;").replace(">", "&gt;").replace("<", "&lt;"));
+
+                            }
+                            text.delete(0, text.length());
                             rtfFlag = false;
                             fileWriter.write("</" + endValue + ">");
                             break;
@@ -166,6 +185,7 @@ public class StartProcess {
 
                     }
             }
+            fileWriter.flush();
         }
         try {
             file.close();
