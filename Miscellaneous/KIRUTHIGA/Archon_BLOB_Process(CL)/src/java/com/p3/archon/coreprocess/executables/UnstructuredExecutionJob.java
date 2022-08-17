@@ -146,6 +146,7 @@ public class UnstructuredExecutionJob extends ExecutionJob implements JobExecuta
 		case "sybase":
 			return "[" + inputArgs.database + "]" + "." + "[" + inputArgs.schema + "]" + "." + "[" + tableName + "]";
 		case "teradata":
+		case "cache":
 		case "oracle":
 		case "oracleservice":
 		case "mysql":

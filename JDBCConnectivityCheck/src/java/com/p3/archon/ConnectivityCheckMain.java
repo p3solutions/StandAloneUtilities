@@ -20,9 +20,9 @@ import com.p3.archon.beans.ArchonInputBean;
 
 public class ConnectivityCheckMain {
 	public static void main(String[] args) {
-//
-		args = new String[] { "-h", "DESKTOP-LVKUBH8", "-l", "1433", "-u", "sa", "-p", "secret", "-s", "dbo", "-d",
-				"CLAIMS_SYS" };
+
+		args = new String[] { "-dbs", "oracle", "-h", "localhost", "-l", "1434", "-u", "", "-p", "", "-s", "dbo", "-d",
+				"CLAIMS_SYS", "-tInfo" };
 
 		if (args.length == 0) {
 			System.err.println("No arguments specified.\nTerminating ... ");
@@ -63,8 +63,23 @@ public class ConnectivityCheckMain {
 //			
 //			System.out.println("connect");
 //			ora8conn.close();
+//			String connectionURL = "jdbc:mysql://" + ipargs.getHost() + ":" + ipargs.getPort() + "/"
+//					+ ipargs.getDatabase();
 
-			String connectionURL = "jdbc:sqlserver://" + ipargs.getHost() + ";database=" + ipargs.getDatabase();
+//			String connectionURL = "jdbc:sqlserver://" + ipargs.getHost() + ";database=" + ipargs.getDatabase();
+
+			String connectionURL = "jdbc:jtds:sqlserver://" + ipargs.getHost() + ":" + ipargs.getPort() + "/"
+					+ ipargs.getDatabase() + ";useNTLMv2=true";
+//			Class.forName("oracle.jdbc.xa.client.OracleXADataSource");
+
+//			if (ipargs.getServer().equalsIgnoreCase("oracle")) {
+//				connectionURL = "jdbc:oracle:thin:@" + ipargs.getHost() + ":" + ipargs.getPort() + ":"
+//						+ ipargs.getDatabase();
+//			} else {
+//				connectionURL = "jdbc:oracle:thin:@//" + ipargs.getHost() + ":" + ipargs.getPort() + "/"
+//						+ ipargs.getDatabase();
+//
+//			}
 
 			System.out.println(connectionURL);
 
@@ -82,7 +97,19 @@ public class ConnectivityCheckMain {
 					String catalogName = rs.getString(1);
 					String schemaName = rs.getString(2);
 					String tableName = rs.getString(3);
-					System.out.println(catalogName + " " + schemaName + " " + tableName);
+
+					if (ipargs.isRecordCount()) {
+						String countQuery = " select count(1) from " + schemaName + "." + tableName;
+						Statement statement = conn.createStatement();
+						ResultSet qrs = statement.executeQuery(countQuery);
+						qrs.next();
+						long count = qrs.getLong(1);
+						statement.close();
+						qrs.close();
+						System.out.println(catalogName + " " + schemaName + " " + tableName + " " + count);
+					} else
+						System.out.println(catalogName + " " + schemaName + " " + tableName);
+
 				}
 				rs.close();
 			}

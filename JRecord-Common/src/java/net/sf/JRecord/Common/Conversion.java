@@ -35,9 +35,14 @@
 
 package net.sf.JRecord.Common;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Locale;
@@ -390,10 +395,12 @@ public final class Conversion {
 	 * @param record Full record from which the value is to be extracted
 	 * @param start  Start of field
 	 * @param len    Length of the field
+	 * @param field
 	 *
 	 * @return the value of a field
 	 */
-	public static String getMainframePackedDecimal(final byte[] record, final int start, final int len) {
+	public static String getMainframePackedDecimal(final byte[] record, final int start, final int len,
+			IFieldDetail field) {
 		StringBuilder hex = getDecimalSB(record, start, start + len);
 		// Long.toHexString(toBigInt(start, len).longValue());
 		String ret = "0";
@@ -416,6 +423,15 @@ public final class Conversion {
 				hex.setLength(hex.length() - 1);
 				break;
 			default:
+				String str = field.getName() + " => " + hex.toString()
+						+ "  -> null as packed decimal field not matched with the case\n";
+				try {
+					Files.write(Paths.get("C:\\Users\\p3admin\\Downloads\\OneDrive_1_3-7-2022\\a.txt"), str.getBytes(),
+							StandardOpenOption.APPEND);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				return "";
 			}
 			ret = hex.toString();
@@ -424,10 +440,19 @@ public final class Conversion {
 //	    if (ret.length() == 0) {
 //	        ret = "0";
 //	    }
-		
+
 		String regex = "[+-]?[0-9]*[\\\\.]?[0-9]*";
-	    if(!Pattern.matches(regex, hex.toString()))
-	    	ret = "";
+		if (!Pattern.matches(regex, hex.toString())) {
+			String str = field.getName() + " => " + hex.toString() + "  -> null as non numeric field\n";
+			try {
+				Files.write(Paths.get("C:\\Users\\p3admin\\Downloads\\OneDrive_1_3-7-2022\\a.txt"), str.getBytes(),
+						StandardOpenOption.APPEND);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ret = "";
+		}
 
 		return ret;
 	}

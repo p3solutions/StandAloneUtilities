@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Built-By: Sathian MP
+Build-Jdk: 11.0.10
+Class-Path: barcodes-7.1.9.jar font-asian-7.1.9.jar forms-7.1.9.jar hyph
+ -7.1.9.jar io-7.1.9.jar kernel-7.1.9.jar layout-7.1.9.jar pdfa-7.1.9.ja
+ r sign-7.1.9.jar styled-xml-parser-7.1.9.jar svg-7.1.9.jar html2pdf-2.1
+ .6.jar slf4j-api-1.7.13.jar
+Main-Class: com.p3.html2pdf.main.htm2pdf.htm2pdfMain
+Created-By: Maven Integration for Eclipse
+

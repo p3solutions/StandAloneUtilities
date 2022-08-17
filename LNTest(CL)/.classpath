@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="java/" kind="src" path="src"/>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="lib" path="lib/NCSO.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.15.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-2.6.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_272"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/excelcsv"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/siphelper"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

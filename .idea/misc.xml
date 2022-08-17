@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/email_test" />
+  </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/rtf_to_txt/pom.xml" />
         <option value="$PROJECT_DIR$/jdbc_parallel_connection_check/pom.xml" />
+        <option value="$PROJECT_DIR$/encoding_detucter/pom.xml" />
+        <option value="$PROJECT_DIR$/blob2rss/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-backend/pom.xml" />
       </list>
     </option>
   </component>

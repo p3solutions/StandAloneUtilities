@@ -39,7 +39,7 @@
  *    GNU Lesser General Public License for more details.
  *
  * ------------------------------------------------------------------------ */
-      
+
 package net.sf.JRecord.Types;
 
 import java.math.BigInteger;
@@ -56,64 +56,55 @@ import net.sf.JRecord.Common.IFieldDetail;
  */
 public class TypePackedDecimal extends TypeNum {
 
+	/**
+	 * Define a Mainframe Packed Decimal Type.
+	 *
+	 * <p>
+	 * This class is the interface between the raw data in the file and what is to
+	 * be displayed on the screen for Mainframe Packed Decimal fields.
+	 */
+	public TypePackedDecimal() {
+		super(false, true, true, false, true, false, false);
+	}
 
-    /**
-     * Define a Mainframe Packed Decimal Type.
-     *
-     * <p>This class is the interface between the raw data in the file
-     * and what is to be displayed on the screen for Mainframe Packed Decimal
-     * fields.
-     */
-    public TypePackedDecimal() {
-        super(false, true, true, false, true, false, false);
-    }
+	public TypePackedDecimal(boolean positive) {
+		super(false, true, true, positive, true, false, false);
+	}
 
-    public TypePackedDecimal(boolean positive) {
-        super(false, true, true, positive, true, false, false);
-    }
+	/**
+	 * @see net.sf.JRecord.Types.Type#getField(byte[], int, IFieldDetail)
+	 */
+	public Object getField(byte[] record, final int position, final IFieldDetail field) {
+		int pos = position - 1;
+		int end = position + field.getLen() - 1;
+		int min = java.lang.Math.min(end, record.length);
+		int fldLength = min - pos;
 
-    /**
-     * @see net.sf.JRecord.Types.Type#getField(byte[], int, IFieldDetail)
-     */
-    public Object getField(byte[] record,
-            final int position,
-			final IFieldDetail field) {
-        int pos = position - 1;
-        int end = position + field.getLen() - 1;
-	    int min = java.lang.Math.min(end, record.length);
-	    int fldLength = min - pos;
+		String s = Conversion.getMainframePackedDecimal(record, pos, fldLength, field);
 
-        String s = Conversion.getMainframePackedDecimal(record,
-                								 pos,
-                								 fldLength);
+		return addDecimalPoint(s, field.getDecimal());
+	}
 
-        return addDecimalPoint(s, field.getDecimal());
-    }
-
-
-    /**
-     * @see net.sf.JRecord.Types.Type#setField(byte[], int, IFieldDetail, Object)
-     */
-    @Override
-    public byte[] setField(byte[] record,
-            final int position,
-			final IFieldDetail field,
-			Object value) {
+	/**
+	 * @see net.sf.JRecord.Types.Type#setField(byte[], int, IFieldDetail, Object)
+	 */
+	@Override
+	public byte[] setField(byte[] record, final int position, final IFieldDetail field, Object value) {
 
 		int pos = position - 1;
 		int len = field.getLen();
 
-        String val = checkValue(field, toNumberString(value));
-	    if (val.startsWith("-")) {
-	        val = val.substring(1) + "D";
-	    } else if (isPositive()) {
-	    	val += "F";
-	    } else {
-	        val += "C";
-	    }
+		String val = checkValue(field, toNumberString(value));
+		if (val.startsWith("-")) {
+			val = val.substring(1) + "D";
+		} else if (isPositive()) {
+			val += "F";
+		} else {
+			val += "C";
+		}
 
-	    //if (val.length() < 17) {
-	    Conversion.setBigInt(record, pos, len, new BigInteger(val, BASE_16), true);
+		// if (val.length() < 17) {
+		Conversion.setBigInt(record, pos, len, new BigInteger(val, BASE_16), true);
 //	    } else {
 //	    	int split = val.length() - 16;
 //
@@ -124,6 +115,6 @@ public class TypePackedDecimal extends TypeNum {
 ////							 pos,
 ////							 len));
 //	    }
-	    return record;
-    }
+		return record;
+	}
 }

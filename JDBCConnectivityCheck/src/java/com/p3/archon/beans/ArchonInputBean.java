@@ -4,6 +4,9 @@ import org.kohsuke.args4j.Option;
 
 public class ArchonInputBean {
 
+	@Option(name = "-dbs", aliases = { "--server" }, usage = "server", required = true)
+	private String server;
+
 	@Option(name = "-h", aliases = { "--host" }, usage = "host Server IP", required = true)
 	private String host;
 
@@ -33,6 +36,17 @@ public class ArchonInputBean {
 
 	@Option(name = "-q", aliases = { "--isQ " }, usage = "isQ")
 	private boolean isQ;
+	
+	@Option(name = "-rc", aliases = { "--rc " }, usage = "rc")
+	private boolean recordCount;
+
+	public boolean isRecordCount() {
+		return recordCount;
+	}
+
+	public void setRecordCount(boolean recordCount) {
+		this.recordCount = recordCount;
+	}
 
 	public boolean isQ() {
 		return isQ;
@@ -44,6 +58,14 @@ public class ArchonInputBean {
 
 	public boolean istInfo() {
 		return tInfo;
+	}
+
+	public String getServer() {
+		return server;
+	}
+
+	public void setServer(String server) {
+		this.server = server;
 	}
 
 	public void settInfo(boolean tInfo) {

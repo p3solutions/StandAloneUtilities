@@ -6,15 +6,21 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="encoding_detucter" />
         <module name="rtf_to_txt" />
+        <module name="blob2rss" />
         <module name="jdbc_parallel_connection_check" />
+        <module name="springboot-backend" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="blob2rss" options="-parameters" />
+      <module name="encoding_detucter" options="-parameters" />
       <module name="jdbc_parallel_connection_check" options="-parameters" />
       <module name="rtf_to_txt" options="-parameters" />
+      <module name="springboot-backend" options="-parameters" />
     </option>
   </component>
 </project>

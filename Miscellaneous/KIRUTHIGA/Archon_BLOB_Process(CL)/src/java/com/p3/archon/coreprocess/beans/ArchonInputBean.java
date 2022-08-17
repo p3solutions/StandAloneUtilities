@@ -289,6 +289,7 @@ public class ArchonInputBean {
 		return uec;
 	}
 
+
 	public void setUec(String uec) {
 		this.uec = uec;
 	}
@@ -741,6 +742,7 @@ public class ArchonInputBean {
 		case "teradata":
 		case "sql":
 		case "sqlwinauth":
+		case "cache":
 		case "oracle":
 		case "oracleservice":
 		case "mysql":
