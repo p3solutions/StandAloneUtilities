@@ -17,7 +17,9 @@ import com.p3.archon.utils.JobLogger;
 public class XmlToSipGeneratorMain {
 	public static void main(String[] args) {
 
-//		args = new String[] { "-ip", "E:\\oracle9i", "-an", "test", "-h", "d", "-isSip", "-rpx", "1" };
+		args = new String[] { "-ip",
+				"C:\\Archon\\Archon_Output\\superadmin\\RDBMS_Extractor\\20220201\\RDBMS_Extractor-1643707233440-cbc30f18-e5b0-4f2d-8f80-b56f3ee1c34b_0_0",
+				"-an", "aa", "-h", "sa", "-rpx", "105", "-isSip" };
 
 		JobLogger.getLogger().info("SipGen", XmlToSipGeneratorMain.class.getName(), "main",
 				"Job Started = " + new Date());

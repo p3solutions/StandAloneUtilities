@@ -19,6 +19,9 @@ public class ArchonInputBean {
 	@Option(name = "-rpx", aliases = { "--rpx" }, usage = "rpx", depends = { "-isSip" })
 	public int rpx;
 
+	@Option(name = "-dbs", aliases = { "--database server" }, usage = "Server", depends = { "-ispdi" })
+	private String server;
+
 	@Option(name = "-host", aliases = { "--host" }, usage = "Host", depends = { "-ispdi" })
 	private String host;
 
@@ -83,6 +86,14 @@ public class ArchonInputBean {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getServer() {
+		return server;
+	}
+
+	public void setServer(String server) {
+		this.server = server;
 	}
 
 	public String getPassword() {

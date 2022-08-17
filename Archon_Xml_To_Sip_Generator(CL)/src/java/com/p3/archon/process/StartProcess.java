@@ -99,30 +99,69 @@ public class StartProcess {
 		if (ipargs.isPdiGen()) {
 
 			List<String> tn = new ArrayList<String>();
+			String ConnectionUrl = null;
+			switch (ipargs.getServer().toLowerCase()) {
+			case "mainframe-db2":
+				ConnectionUrl = "jdbc:db2://" + ipargs.getHost() + ":" + ipargs.getPort() + "/" + ipargs.getLocation();
+				break;
+			case "db2":
+				ConnectionUrl = "jdbc:db2://" + ipargs.getHost() + ":" + ipargs.getPort() + "/" + ipargs.getDatabase()
+						+ ";retrieveMessagesFromServerOnGetMessage=true;";
+				break;
+			case "mysql":
+				ConnectionUrl = "jdbc:mysql://" + ipargs.getHost() + ":" + ipargs.getPort() + "/" + ipargs.getDatabase()
+						+ "";
+				break;
 
-			String ConnectionUrl = "jdbc:db2://" + ipargs.getHost() + ":" + ipargs.getPort() + "/"
-					+ ipargs.getLocation();
+			default:
+				break;
+			}
+
 			Connection connection = DriverManager.getConnection(ConnectionUrl, ipargs.getUsername(),
 					ipargs.getPassword());
 
-			String[] tableNames = ipargs.getTableName().split(",");
-			if (tableNames.length != 0) {
+			String[] tableNames = null;
+			if (ipargs.getTableName() != null) {
+				tableNames = ipargs.getTableName().split(",");
+			}
+			if (tableNames != null && tableNames.length != 0) {
 				for (String string : tableNames) {
 					tn.add(string);
 				}
 			} else {
-				Statement statement = null;
-				ResultSet resultSet = null;
-				statement = connection.createStatement();
-				resultSet = statement.executeQuery("SELECT Name FROM SYSIBM.SYSTABLES WHERE DBNAME='"
-						+ ipargs.getDatabase() + "' and CREATOR='" + ipargs.getSchema() + "' AND type ='T';");
-				while (resultSet.next()) {
 
-					tn.add(resultSet.getString(1));
+				switch (ipargs.getServer().toLowerCase()) {
+				case "mainframe-db2":
+					Statement statement = null;
+					ResultSet resultSet = null;
+					statement = connection.createStatement();
+					resultSet = statement.executeQuery("SELECT Name FROM SYSIBM.SYSTABLES WHERE DBNAME='"
+							+ ipargs.getDatabase() + "' and CREATOR='" + ipargs.getSchema() + "' AND type ='T';");
+					while (resultSet.next()) {
+
+						tn.add(resultSet.getString(1));
+					}
+
+					statement.close();
+					resultSet.close();
+					break;
+				case "db2":
+				case "mysql":
+
+					ResultSet rs = connection.getMetaData().getTables(null, ipargs.getSchema(), "%",
+							new String[] { "TABLE", "VIEW" });
+					while (rs.next()) {
+						tn.add(rs.getString("TABLE_NAME"));
+
+					}
+					rs.close();
+
+					break;
+
+				default:
+					break;
 				}
 
-				statement.close();
-				resultSet.close();
 			}
 
 			for (String string : tn) {
