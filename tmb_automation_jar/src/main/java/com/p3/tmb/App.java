@@ -28,8 +28,8 @@ public class App
     public static void main( String[] args )
     {
 
-		System.setProperty("logFilename", "log");
-		System.setProperty("basePath", "logs");
+//		System.setProperty("logFilename", "log");
+//		System.setProperty("basePath", "logs");
 
 		final Logger log = LogManager.getLogger(App.class.getName());
 

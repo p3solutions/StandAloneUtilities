@@ -56,3 +56,7 @@ jar {
     exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
 
 }
+
+tasks.withType(JavaCompile) {
+    options.release = 8
+}
