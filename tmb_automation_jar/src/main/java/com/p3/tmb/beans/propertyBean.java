@@ -25,6 +25,7 @@ public class propertyBean {
 	private String folderName2;
 	private String folder1Date;
 	private String folder2Date;
+	private Integer sipSplitSize = 100;
 //	private String holding_reconcile;
 //	private String tableName_reconcile;
 	private String dateTimeForReport;
@@ -238,6 +239,12 @@ public class propertyBean {
 	public void setDateTimeForReport(String dateTimeForReport) {
 		this.dateTimeForReport = dateTimeForReport;
 	}
-	
-	
+
+	public Integer getSipSplitSize() {
+		return sipSplitSize;
+	}
+
+	public void setSipSplitSize(Integer sipSplitSize) {
+		this.sipSplitSize = sipSplitSize;
+	}
 }

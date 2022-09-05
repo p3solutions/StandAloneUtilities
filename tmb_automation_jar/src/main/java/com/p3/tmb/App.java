@@ -10,7 +10,9 @@ import com.p3.tmb.constant.INGESTER_CONSTANT;
 import com.p3.tmb.constant.PROPERTY_CONSTANT;
 import com.p3.tmb.directoryListener.directoryListener;
 import com.p3.tmb.property.parsePropertyFile;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configuration;
 import org.kohsuke.args4j.CmdLineParser;
 
 import java.io.File;
@@ -23,11 +25,15 @@ import java.util.Date;
  */
 public class App 
 {
-	static Logger log = Logger.getLogger(App.class.getName());
-	
     public static void main( String[] args )
     {
-    	log.info("#################################### TMB AUTOMATION START RUNNING ####################################");
+
+		System.setProperty("logFilename", "log");
+		System.setProperty("basePath", "logs");
+
+		final Logger log = LogManager.getLogger(App.class.getName());
+
+		log.info("#################################### TMB AUTOMATION START RUNNING ####################################");
     	//System.out.println("Enc : " + securityModule.perfromEncrypt("FLEET CARD SAMPLE", "autoappusr", ""));
     	//System.out.println("ENC : " + encryptionUtils.encryptor("Pass@265"));
     	//System.out.println("ENC : " + encryptionUtils.encryptor("clarchon@123"));
@@ -67,6 +73,7 @@ public class App
 				propBean.setFolderName2(propertyFile.getValue(PROPERTY_CONSTANT.FOLDER_NAME2));
 				propBean.setFolder1Date(propertyFile.getValue(PROPERTY_CONSTANT.FOLDER1_DATE));
 				propBean.setFolder2Date(propertyFile.getValue(PROPERTY_CONSTANT.FOLDER2_DATE));
+				propBean.setSipSplitSize(Integer.valueOf(propertyFile.getValue(PROPERTY_CONSTANT.SIP_SPLIT_SIZE)));
 //				propBean.setHolding_reconcile(propertyFile.getValue(PROPERTY_CONSTANT.HOLDING_NAME_RECONCILE));
 //				propBean.setTableName_reconcile(propertyFile.getValue(PROPERTY_CONSTANT.TABLE_NAME_RECONCILE));
 				

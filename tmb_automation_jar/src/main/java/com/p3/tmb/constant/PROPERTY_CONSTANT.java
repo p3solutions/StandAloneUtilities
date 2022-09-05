@@ -24,6 +24,7 @@ public class PROPERTY_CONSTANT {
 	public static final String FOLDER_NAME2 = "FOLDER_NAME2";
 	public static final String FOLDER1_DATE = "FOLDER1_DATE";
 	public static final String FOLDER2_DATE = "FOLDER2_DATE";
+	public static final String SIP_SPLIT_SIZE = "SIP_SPLIT_SIZE";
 //	public static final String HOLDING_NAME_RECONCILE = "HOLDING_NAME_RECONCILE";
 //	public static final String TABLE_NAME_RECONCILE = "TABLE_NAME_RECONCILE";
 	

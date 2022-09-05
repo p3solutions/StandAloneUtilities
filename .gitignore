@@ -1,10 +1,14 @@
 # Compiled class file
+.gradle
+build/
 bin
 .idea
 *.class
 .metadata
 # Log file
 *.log
+.build
+.gradle
 
 # BlueJ files
 *.ctxt

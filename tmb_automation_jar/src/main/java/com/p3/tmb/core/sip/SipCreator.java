@@ -25,7 +25,7 @@ public class SipCreator {
 			throws Exception {
 		this.propBean = propBean;
 		this.outputPath = propBean.getOutputLocation() + File.separator + schemaName;
-		this.rpx = 100 * 1024 * 1024;
+		this.rpx = propBean.getSipSplitSize() * 1024 * 1024;
 		this.appName = propBean.getApplicationName();
 		this.holding = holdingName + "_" + tableName;
 		this.producer = propBean.getProducer();

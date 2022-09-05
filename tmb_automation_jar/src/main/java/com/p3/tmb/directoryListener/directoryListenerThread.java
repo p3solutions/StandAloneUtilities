@@ -10,7 +10,8 @@ import com.p3.tmb.constant.CommonSharedConstants;
 import com.p3.tmb.extractionProcess.extractionProcess;
 import com.p3.tmb.extractionProcess.fileValidationProcess;
 import com.p3.tmb.sftp.sftpUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.TimerTask;
 
 public class directoryListenerThread extends TimerTask {
-	static Logger log = Logger.getLogger(directoryListenerThread.class.getName());
+	Logger log = LogManager.getLogger(directoryListenerThread.class.getName());
 	private sftpBean sftpBean = null;
 	private propertyBean propBean = null;
 	private fileValidationProcess validation = null;

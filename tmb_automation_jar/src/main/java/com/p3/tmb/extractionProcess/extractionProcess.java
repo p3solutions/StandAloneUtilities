@@ -17,7 +17,8 @@ import com.p3.tmb.ingester.ingesterProcess;
 import com.p3.tmb.report.extractionReportGenerator;
 import com.p3.tmb.sftp.sftpFileConnection;
 import com.p3.tmb.sftp.sftpUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.xerces.util.XMLChar;
 
 import java.io.BufferedReader;
@@ -29,7 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class extractionProcess {
-	static Logger log = Logger.getLogger(extractionProcess.class.getName());
+	static Logger log = LogManager.getLogger(extractionProcess.class.getName());
 	private propertyBean propBean;
 	private sftpBean sftpBean;
 	private sftpUtils sftpUtils;  
