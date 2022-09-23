@@ -2,13 +2,17 @@ package com.p3.tmb.commonUtils;
 
 import com.p3.tmb.constant.CommonSharedConstants;
 import com.p3.tmb.constant.INGESTER_CONSTANT;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class FileUtil {
-	
+
+	final static Logger log = LogManager.getLogger(FileUtil.class.getName());
+
 	public static boolean checkForDirectory(String fileDir) throws Exception {
 		File f;
 		try {
@@ -64,7 +68,7 @@ public class FileUtil {
 	}
 
 	public static void checkCreateDirectory(String fileDir) throws Exception {
-		System.out.println("CreateDirectory = " + fileDir);
+		log.info("CreateDirectory = " + fileDir);
 		if (!checkForDirectory(fileDir))
 			createDir(fileDir);
 	}
@@ -84,7 +88,7 @@ public class FileUtil {
 				throw new IOException("Could not create temporary directory: " + tmpDir.getAbsolutePath());
 			}
 		} else {
-			// System.out.println("Not creating directory, " + dir + ", this directory
+			// log.info("Not creating directory, " + dir + ", this directory
 			// already exists.");
 		}
 		return tmpDir;
@@ -100,7 +104,7 @@ public class FileUtil {
 		// Move file to new directory
 		boolean success = file.renameTo(new File(dir, file.getName()));
 		if (!success) {
-			System.err.println("The file " + filetoMove + " was not successfully moved");
+			log.error("The file " + filetoMove + " was not successfully moved");
 			if (haltIfFail)
 				System.exit(1);
 		}
@@ -136,7 +140,7 @@ public class FileUtil {
 			for (String element : children) {
 				boolean success = deleteDirectory(new File(dir, element));
 				if (!success) {
-					System.err.println("Unable to delete file: " + new File(dir, element));
+					log.error("Unable to delete file: " + new File(dir, element));
 					return false;
 				}
 			}
@@ -266,6 +270,6 @@ public class FileUtil {
 
 //	public static void main(String[] args) {
 //		String deletePath = "/users/EAS_TMB/Fleet card/ReconcileReport/26032022132303";
-//		System.out.println(removeFileNameFromLinuxPath(deletePath));
+//		log.info(removeFileNameFromLinuxPath(deletePath));
 //	}
 }

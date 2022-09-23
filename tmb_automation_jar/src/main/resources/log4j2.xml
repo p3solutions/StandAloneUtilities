@@ -2,7 +2,7 @@
 <Configuration status="warn">
 
     <Appenders>
-       <!-- <RollingFile name="fileLogger" fileName="${sys:basePath}/${sys:logFilename}.txt"
+        <RollingFile name="fileLogger" fileName="${sys:basePath}/${sys:logFilename}.txt"
                      filePattern="${sys:basePath}/${sys:logFilename}_%i_%d{yyyy-MM-dd}.txt">
             <PatternLayout>
                 <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
@@ -10,15 +10,15 @@
             <Policies>
                 <SizeBasedTriggeringPolicy size="100 MB"/>
             </Policies>
-        </RollingFile>-->
+        </RollingFile>
 
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="com.p3.tmb" level="info" additivity="false">
-            <appender-ref ref="console" level="info"/>
+        <Logger name="com.p3.tmb" level="info" additivity="true">
+            <appender-ref ref="fileLogger" level="info"/>
         </Logger>
         <Root level="off" additivity="false">
             <appender-ref ref="console" level="info"/>

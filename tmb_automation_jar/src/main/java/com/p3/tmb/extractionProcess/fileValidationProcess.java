@@ -1,5 +1,6 @@
 package com.p3.tmb.extractionProcess;
 
+import com.jcraft.jsch.JSchException;
 import com.p3.tmb.beans.propertyBean;
 import com.p3.tmb.beans.sftpBean;
 import com.p3.tmb.commonUtils.FileUtil;
@@ -8,6 +9,8 @@ import com.p3.tmb.constant.CommonSharedConstants;
 import com.p3.tmb.report.extractionReportGenerator;
 import com.p3.tmb.sftp.sftpFileConnection;
 import com.p3.tmb.sftp.sftpUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,7 +32,8 @@ public class fileValidationProcess {
 	private int missingBlobCount = 0;
 	private List<String> missingBlobFiles = null; 
 	private sftpUtils sftpUtils = null;
-	
+	final Logger log = LogManager.getLogger(fileValidationProcess.class.getName());
+
 	public fileValidationProcess(propertyBean propBean, sftpBean sftpBean) {
 	this.propBean = propBean;
 	this.sftpBean = sftpBean;
@@ -44,9 +48,10 @@ public class fileValidationProcess {
 		missingBlobFiles = new ArrayList<String>();
 		BufferedReader bufferedReader=null;
 		FileReader reader = null;
-		sftpFileConnection sftp1 = new sftpFileConnection(sftpBean);
-		sftp1.getChannelSftp();
+		sftpFileConnection sftp1 = null;
 		try {
+			sftp1 = new sftpFileConnection(sftpBean);
+			sftp1.getChannelSftp();
 			int reportIndex=0,index=0;
 //			sftp = new sftpFileConnection(sftpBean);
 //			sftp.getChannelSftp();
@@ -94,7 +99,15 @@ public class fileValidationProcess {
 					 }
 					}
 				}
-		} catch (IOException e) {
+		}catch (JSchException e) {
+			blobFlag =  false;
+			log.error("SFTP Error while establishing connection");
+			e.printStackTrace();
+			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
+		}
+		catch (IOException e) {
+			blobFlag =  false;
+			log.error(commonUtils.exceptionMsgToString(e));
 			e.printStackTrace();
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
 
@@ -112,7 +125,7 @@ public class fileValidationProcess {
 	}
 	
 	public boolean startValidtaion() throws IOException {
-		System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  File validation started...");
+		log.info("File validation started...");
 		CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  File validation started..." + CommonSharedConstants.newLine);
 		boolean status = false;
 		getSourceRecordCount();
@@ -138,7 +151,7 @@ public class fileValidationProcess {
 	          
 	         }
 	         sourceRecordCount = Integer.parseInt(line.split(",")[1]);
-	         System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Total record count in mapping file : " + sourceRecordCount);
+	         log.info("Total record count in mapping file : " + sourceRecordCount);
 	         CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Total record count in mapping file : " + sourceRecordCount + CommonSharedConstants.newLine);
 	     } catch (IOException e) {
 	         e.printStackTrace();

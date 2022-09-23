@@ -1,6 +1,8 @@
 package com.p3.tmb.commonUtils;
 
 import com.p3.tmb.constant.CommonSharedConstants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,7 +11,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class zipUtils {
-	 
+
+	final Logger log = LogManager.getLogger(zipUtils.class.getName());
+
 	String inputPath;
 	String outputFileName;
 	String outputPath;
@@ -22,13 +26,13 @@ public class zipUtils {
 	    public void zip(List<File> listFiles, String destZipFile) throws FileNotFoundException,
 	            IOException {
 	        ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(destZipFile));
-	        System.out.println("Started Fetching files");
+	        log.info("Started Fetching files");
 	        for (File file : listFiles) {
 	            if (file.isDirectory()) {
-	            	System.out.println("Processing Directory: "+file.getName());
+	            	log.info("Processing Directory: "+file.getName());
 	                zipDirectory(file, file.getName(), zos);
 	            } else {
-	            	System.out.println("Processing File: "+file.getName());
+	            	log.info("Processing File: "+file.getName());
 	                zipFile(file, zos);
 	            }
 	        }
@@ -68,7 +72,7 @@ public class zipUtils {
 	        }
 	        bis.close();
 	        
-	        System.out.println(folder.getName()+" directory Processed.");
+	        log.info(folder.getName()+" directory Processed.");
 
 	        
 	    }
@@ -87,6 +91,6 @@ public class zipUtils {
 	        }
 	        zos.closeEntry();
 	        bis.close();
-	        System.out.println(file.getName()+" File Processed.");
+	        log.info(file.getName()+" File Processed.");
 	    }
 	    }

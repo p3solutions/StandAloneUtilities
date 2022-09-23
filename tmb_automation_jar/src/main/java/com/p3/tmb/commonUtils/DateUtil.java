@@ -1,6 +1,9 @@
 package com.p3.tmb.commonUtils;
 
 import com.p3.tmb.constant.CommonSharedConstants;
+import com.p3.tmb.sftp.sftpFileConnection;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -11,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class DateUtil {
+	final static Logger log = LogManager.getLogger(DateUtil.class.getName());
 	public static String dateConversion(String inputDate,String inputPattern,String outputPattern) {
 		String outDate = "";
 		try {
@@ -18,7 +22,7 @@ public class DateUtil {
 			Date dateFormat = inputFormat.parse(inputDate);
 			SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
 			outDate = outputFormat.format(dateFormat);
-			// System.out.println("output date:"+outDate);
+			// log.info("output date:"+outDate);
 		} catch (Exception e) {
 			e.printStackTrace();
 			CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
@@ -30,21 +34,21 @@ public class DateUtil {
 	public static String getDateForDirectory() {
 		DateFormat dform = new SimpleDateFormat("yyyyMMddHHmmss");
 		Date obj = new Date();
-//		System.out.println(dform.format(obj)); 
+//		log.info(dform.format(obj)); 
 		return dform.format(obj);
 	}
 	
 //	public static String getDateForDirectory1() {
 //		DateFormat dform = new SimpleDateFormat("yyyyMMdd");
 //		Date obj = new Date();
-//		//System.out.println(dform.format(obj)); 
+//		//log.info(dform.format(obj)); 
 //		return dform.format(obj);
 //	}
 	
 	public static String getCurrentYearMonth() {
 		
 		LocalDate currentdate = LocalDate.now();
-//	      System.out.println("Current date: "+currentdate.toString());
+//	      log.info("Current date: "+currentdate.toString());
 	     
 	      return currentdate.toString().substring(0,currentdate.toString().lastIndexOf("-"));
 	}
@@ -62,7 +66,7 @@ public class DateUtil {
 		long nextDayMilliSeconds = date.getTime() + ONE_DAY_MILLI_SECONDS;
 		Date nextDate = new Date(nextDayMilliSeconds);
 		String nextDateStr = dateFormat.format(nextDate);
-//		System.out.println("Next Date : " + nextDateStr);
+//		log.info("Next Date : " + nextDateStr);
 		
 		return nextDateStr;
 	}
@@ -85,7 +89,7 @@ public class DateUtil {
 		convertedDate = convertedDate.withDayOfMonth(
 		                                convertedDate.getMonth().length(convertedDate.isLeapYear()));
 		
-//		System.out.println("Convert Date : " + convertedDate.toString());
+//		log.info("Convert Date : " + convertedDate.toString());
 		
 		return Integer.parseInt(convertedDate.toString().split("-")[2]);
 				
@@ -118,7 +122,7 @@ public class DateUtil {
 		String time[] = scheduledTime.split(":");
 		if(isTodayScheduleTimeAvailable(Integer.parseInt(time[0]),Integer.parseInt(time[1]))) {
 			LocalDate currentdate = LocalDate.now();
-			System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Next Scheduled Job Date(Today) : " + currentdate + " " + scheduledTime);
+			log.info("Next Scheduled Job Date(Today) : " + currentdate + " " + scheduledTime);
 			return currentdate + " " + scheduledTime;
 		}
 		LocalDate currentdate = LocalDate.now();
@@ -126,7 +130,7 @@ public class DateUtil {
 		String nextDate = getNextDateFromFolderDate(getDayFormat(currentdate.getDayOfMonth()));
 		Date date = dateFormatter.parse(nextDate + " " + scheduledTime);
 		//Date date = dateFormatter.parse(currentdate + " " + time[0] + ":" + (Integer.parseInt(time[1])+3) + ":" + time[2]);
-		System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Next Scheduled Job Date(Tmrw) : "+  dateFormatter.format(date));
+		log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Next Scheduled Job Date(Tmrw) : "+  dateFormatter.format(date));
 		return dateFormatter.format(date);
 	}
 

@@ -1,5 +1,6 @@
 package com.p3.tmb.directoryListener;
 
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import com.p3.tmb.beans.propertyBean;
 import com.p3.tmb.beans.sftpBean;
@@ -49,7 +50,7 @@ public class directoryListenerThread extends TimerTask {
 	}
 	
 	public void startRunning() {
-//		System.out.println("Accessed start running");
+//		log.info("Accessed start running");
 		jobStatus = true;
 		txtFileList = null;
 		boolean jobScheduleFlag = false;
@@ -75,20 +76,28 @@ public class directoryListenerThread extends TimerTask {
 		}
 		catch(Exception e) {
 			e.printStackTrace();
+			log.error(commonUtils.exceptionMsgToString(e));
 			CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
 		}
 		try {
 			String folderPath = propBean.getTextFilePath();
 		if(txtFileList != null && (txtFileList.size() != 0) && jobScheduleFlag && sftpUtils.isJobReadyToExecute(folderPath+CommonSharedConstants.LINUX_PATH_SEPERATOR+CommonSharedConstants.folderProp)) 
 		{
-//			System.out.println("Root Path : " +rootPath);
+//			log.info("Root Path : " +rootPath);
 //			CommonSharedConstants.logContent.append("Root path : " + rootPath + CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + CommonSharedConstants.newLine);
-//			System.out.println("Text file path : "+propBean.getTextFilePath());
-//			System.out.println("Folder path:"+folderPath);
+//			log.info("Text file path : "+propBean.getTextFilePath());
+//			log.info("Folder path:"+folderPath);
 			startProcess();
-			
-		    sftpUtils.deleteFile(folderPath + CommonSharedConstants.LINUX_PATH_SEPERATOR + CommonSharedConstants.folderProp);
-		    sftpUtils.createPropertyFilesinRemoteDir(rootPath,folderName,CommonSharedConstants.folderProp,CommonSharedConstants.readyForJobFalse);
+			try {
+				sftpUtils.deleteFile(folderPath + CommonSharedConstants.LINUX_PATH_SEPERATOR + CommonSharedConstants.folderProp);
+				sftpUtils.createPropertyFilesinRemoteDir(rootPath,folderName,CommonSharedConstants.folderProp,CommonSharedConstants.readyForJobFalse);
+			}catch (JSchException e){
+				e.printStackTrace();
+				log.error("Delete and Create : Error while updating Folder.properties - Could affect the processing of files in next schedule. PLEASE VERIFY IMMEDIATELY");
+				CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "\"Delete and Create : Error while updating Folder.properties - Could affect the processing of files in next schedule. PLEASE VERIFY IMMEDIATELY");
+
+			}
+
 		}
 		else {
 			
@@ -108,23 +117,23 @@ public class directoryListenerThread extends TimerTask {
 				CommonSharedConstants.flag25Cycle = true;
 				CommonSharedConstants.extendHoursFlag = true;
 			    CommonSharedConstants.extendDate = CommonSharedConstants.sdf3.parse(folder1DateTimeExt);
-//				System.out.println("true");
-//				System.out.println("Waiting for mapping text file : " +  CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())));
+//				log.info("true");
+//				log.info("Waiting for mapping text file : " +  CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())));
 //				CommonSharedConstants.logContent.append("Waiting for mapping text file : " +  CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + CommonSharedConstants.newLine);
 			}
 			else if(folder2DateTime.equals(dateTime)) {
 				CommonSharedConstants.flagMonthend = true;
 				CommonSharedConstants.extendHoursFlag = true;
 				CommonSharedConstants.extendDate = CommonSharedConstants.sdf3.parse(folder2DateTimeExt);
-//				System.out.println("true");
-//				System.out.println("Waiting for mapping text file : " +  CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())));
+//				log.info("true");
+//				log.info("Waiting for mapping text file : " +  CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())));
 //				CommonSharedConstants.logContent.append("Waiting for mapping text file : " +  CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + CommonSharedConstants.newLine);
 			}
 			else if(!CommonSharedConstants.extendHoursFlag) {
 				CommonSharedConstants.extendHoursFlag = true;
 			}
 			if(CommonSharedConstants.flag25Cycle || CommonSharedConstants.flagMonthend) {
-				System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Waiting for mapping text file");
+				log.info("Waiting for mapping text file");
 				CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  " + CommonSharedConstants.newLine);
 				}
 			if(CommonSharedConstants.extendHoursCount == 12) {
@@ -133,8 +142,8 @@ public class directoryListenerThread extends TimerTask {
 				CommonSharedConstants.extendHoursFlag = false;
 				CommonSharedConstants.jobStatus = false;
 				CommonSharedConstants.extendHoursCount = 0;
-//				System.out.println("False2");
-				System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Maximum job exceeded....");
+//				log.info("False2");
+				log.info("Maximum job exceeded....");
 				CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Maximum job exceeded...." + CommonSharedConstants.newLine);
 			}
 			
@@ -189,28 +198,28 @@ public class directoryListenerThread extends TimerTask {
 //		String dateTime = DateUtil.dateConversion(currentDateTime.toString(), "yyyy-MM-dd'T'HH:mm:ss.SSS", "yyyy-MM-dd HH");
 //		Date date1 = CommonSharedConstants.sdf2.parse(currentDateTime.toString());
 //		String currentMonthYear =  CommonSharedConstants.sdf1.format(date1);
-//		System.out.println("current");
+//		log.info("current");
 //		String folder1DateTime = currentMonthYear + CommonSharedConstants.hiphen + propBean.getFolder1Date() +  " " + CommonSharedConstants.sdf5.format(propBean.getJobScheduleTime());
 //		String folder2DateTime = currentMonthYear + CommonSharedConstants.hiphen + propBean.getFolder2Date() +  " " + CommonSharedConstants.sdf5.format(propBean.getJobScheduleTime());
 //		if(folder1DateTime.equals(dateTime)) {
 //			CommonSharedConstants.flag25Cycle = true;
-//			System.out.println("true");
+//			log.info("true");
 //		}
 //		else if(folder2DateTime.equals(dateTime)) {
 //			CommonSharedConstants.flagMonthend = true;
-//			System.out.println("true");
+//			log.info("true");
 //		}
 //		else if(CommonSharedConstants.extendHoursCount == 12) {
 //			CommonSharedConstants.flag25Cycle = false;
 //			CommonSharedConstants.flagMonthend = false;
 //			CommonSharedConstants.extendHoursCount = 0;
-//		System.out.println("False2");
+//		log.info("False2");
 //		}
 //	}
 	
 	private void startProcess() throws Exception {
 		try {
-			System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Start Processing...");
+			log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Start Processing...");
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Start Processing..." + CommonSharedConstants.newLine);
 			if(CommonSharedConstants.flag25Cycle) {
 				CommonSharedConstants.flag25Cycle = false;
@@ -239,14 +248,14 @@ public class directoryListenerThread extends TimerTask {
 			
 			for(String txtFile : txtFileList) {
 				propBean.setTextFilePath(txtFilePath + CommonSharedConstants.LINUX_PATH_SEPERATOR + txtFile);
-				System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis()))+ "  Text file path : " + propBean.getTextFilePath());
+				log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis()))+ "  Text file path : " + propBean.getTextFilePath());
 				CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Text file path : "+ propBean.getTextFilePath() + CommonSharedConstants.newLine);
-				System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Mapping file detected....");
+				log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Mapping file detected....");
 				CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Mapping file detected..." + CommonSharedConstants.newLine);
 				sftpUtils.downloadFile(propBean.getTextFilePath());
 				//sftpUtils.deleteFile(propBean.getTextFilePath());
 				if (validation.startValidtaion()) {
-					System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  File validation succeefull!!!");
+					log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  File validation succeefull!!!");
 					CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  File validation succeefull!!!" + CommonSharedConstants.newLine);
 					sftpUtils sftpUtils = new sftpUtils(sftpBean, propBean);
 					try {
@@ -255,18 +264,18 @@ public class directoryListenerThread extends TimerTask {
 						e1.printStackTrace();
 						CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + commonUtils.exceptionMsgToString(e1) + CommonSharedConstants.newLine);
 					}
-//					System.out.println("Downloaded");
+//					log.info("Downloaded");
 						
 					extractionProcess extractionObj = new extractionProcess(propBean, sftpBean);
 					extractionObj.startExtraction();
 						
-//					System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  File Processed....");
+//					log.info("File Processed....");
 //					CommonSharedConstants.logContent.append("File Processed...."+ CommonSharedConstants.newLine);
 				} else {
 					String deletePath = (propBean.getOutputLocation() + File.separator + "TEMP");
 					FileUtil.deleteDirectory(deletePath);
 					//FileUtil.deleteDirectory(propBean.getOutputLocation());
-					System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  File validation failed ....");
+					log.info("File validation failed ....");
 					CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  File validation failed ...." + CommonSharedConstants.newLine);
 				}
 			}
@@ -275,7 +284,7 @@ public class directoryListenerThread extends TimerTask {
 		    sftpUtils.uploadFile(logFilepath, pdfPath);
 		    CommonSharedConstants.logContent = new StringBuffer();
 			//} else {
-				//System.out.println("Waiting for mapping file.... : " + sdf3.format(timestamp));
+				//log.info("Waiting for mapping file.... : " + sdf3.format(timestamp));
 			//}
 		    propBean.setPdfLocation(FileUtil.removeFileNameFromLinuxPath(pdfPath));
 		}
@@ -284,7 +293,7 @@ public class directoryListenerThread extends TimerTask {
 			e.printStackTrace();
 			CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
 		}
-		System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Looking for next folder"); 
+		log.info("Looking for next folder"); 
 		CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Looking for next folder...." + CommonSharedConstants.newLine);
 	}
 

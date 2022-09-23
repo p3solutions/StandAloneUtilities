@@ -25,18 +25,24 @@ import java.util.Date;
  */
 public class App 
 {
-    public static void main( String[] args )
+	public static void main( String[] args )
     {
 
-//		System.setProperty("logFilename", "log");
-//		System.setProperty("basePath", "logs");
+		System.setProperty("logFilename", "log");
+		System.setProperty("basePath", "logs");
+
+		org.apache.logging.log4j.core.LoggerContext ctx =
+				(org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false);
+		final Configuration l = ctx.getConfiguration();
+		ctx.updateLoggers();
 
 		final Logger log = LogManager.getLogger(App.class.getName());
 
+
 		log.info("#################################### TMB AUTOMATION START RUNNING ####################################");
-    	//System.out.println("Enc : " + securityModule.perfromEncrypt("FLEET CARD SAMPLE", "autoappusr", ""));
-    	//System.out.println("ENC : " + encryptionUtils.encryptor("Pass@265"));
-    	//System.out.println("ENC : " + encryptionUtils.encryptor("clarchon@123"));
+    	//log.info("Enc : " + securityModule.perfromEncrypt("FLEET CARD SAMPLE", "autoappusr", ""));
+    	//log.info("ENC : " + encryptionUtils.encryptor("Pass@265"));
+    	//log.info("ENC : " + encryptionUtils.encryptor("clarchon@123"));
     	CommonSharedConstants.jobStartTime = new Date().getTime();
     	CommonSharedConstants.jobStartDateTime = new SimpleDateFormat("dd-MM-yyyy HH.mm.ss").format(new Date());
 	    inputBean inputArgs = new inputBean();
@@ -47,7 +53,25 @@ public class App
 				trimmedArgs[i] = args[i].trim();
 			}
 			parser.parseArgument(trimmedArgs);
-			if (validateArguments(args)) {
+
+			boolean checkValidate = false;
+			try {
+				int count = 0;
+				if (new File(args[1]).exists())
+					count++;
+				if (count == 0) {
+					log.info("Property file path does not exists...");
+					checkValidate =false;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
+			}
+			checkValidate =true;
+
+
+
+			if (checkValidate) {
 				parsePropertyFile propertyFile = new parsePropertyFile(inputArgs.getPropertyFilePath());
 				// stem.out.println(propertyFile.getValue("TEXT_FILE_PATH"));
 				propertyBean propBean = new propertyBean();
@@ -92,30 +116,12 @@ public class App
 			
 				
 			} else {
-				System.out.println("Invalid arguments");
+				log.info("Invalid arguments");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
 		}
 		log.info("#################################### TMB AUTOMATION STOP RUNNING ####################################");
-	}
-
-	private static boolean validateArguments(String InputArgs[]) {
-		boolean checkValidate = false;
-		try {
-//			System.out.println("input args" + InputArgs[0]);
-			int count = 0;
-			if (new File(InputArgs[1]).exists())
-				count++;
-			if (count == 0) {
-				System.out.println("Property file path does not exists...");
-				return false;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
-		}
-		return true;
 	}
 }

@@ -1,11 +1,14 @@
 package com.p3.tmb.sftp;
 
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import com.p3.tmb.beans.propertyBean;
 import com.p3.tmb.beans.sftpBean;
 import com.p3.tmb.commonUtils.FileUtil;
 import com.p3.tmb.commonUtils.commonUtils;
 import com.p3.tmb.constant.CommonSharedConstants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,29 +19,31 @@ public class sftpUtils {
 	sftpFileConnection sftp = null;
 	sftpBean sftpBean = null;
 	propertyBean propBean = null;
-	
+	final Logger log = LogManager.getLogger(sftpUtils.class.getName());
+
 	public sftpUtils(sftpBean sftpBean,propertyBean propBean) {
 		this.sftpBean = sftpBean;
 		this.propBean = propBean;
 	}
 
-	public boolean isFolderExist(String path) {
+	public boolean isFolderExist(String path) throws JSchException {
 		boolean statusFlag = false;
 		try {
 			sftp = new sftpFileConnection(sftpBean);
 			sftp.getChannelSftp();
 			statusFlag = sftp.checkForFileExistence(path);
-			sftp.closeConnections();
-			
 		}
-		catch(Exception e) {
-			e.printStackTrace();
-			CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
-			return false;
+		finally {
+			try {
+				sftp.closeConnections();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 		}
 		return statusFlag;
 	}
-	public boolean createPropertyFilesinRemoteDir(String rootPath, String folderName, String fileName, String content) {
+	public boolean createPropertyFilesinRemoteDir(String rootPath, String folderName, String fileName, String content) throws JSchException {
 		boolean statusFlag = false;
 		try {
 			String folderPath = rootPath+CommonSharedConstants.LINUX_PATH_SEPERATOR+folderName;
@@ -47,47 +52,55 @@ public class sftpUtils {
 				sftp = new sftpFileConnection(sftpBean);
 				sftp.getChannelSftp();
 				statusFlag = sftp.createFile(folderPath+CommonSharedConstants.LINUX_PATH_SEPERATOR+fileName,content);
-				sftp.closeConnections();
+				log.info("Created the folder.properties file in the "+folderName+ " with content "+content);
 			}
 		}
-		catch(Exception e) {
-			e.printStackTrace();
-			CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
-			return false;
+		finally {
+			try {
+				sftp.closeConnections();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		return statusFlag;
 	}
 	
-    public List<String> checkTextFileExistence(String textFileFolder) {
+    public List<String> checkTextFileExistence(String textFileFolder){
     	boolean checkFile = false;
     	List<String> files = null;
     	try {
-    	System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  MFT server connection started ");
+    	log.info("MFT server connection started ");
     	CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  MFT server connection started " + CommonSharedConstants.newLine);
     	sftp = new sftpFileConnection(sftpBean);
 		sftp.getChannelSftp();
-		
+
 		//checkFile = sftp.checkForFileExistence(propBean.getTextFilePath()+"/"+textFileFolder);
 		try {
 		files = sftp.checkForTextFileExistence(propBean.getTextFilePath()+CommonSharedConstants.LINUX_PATH_SEPERATOR+textFileFolder);
-		System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  MFT server connection sucessfull");
+		log.info("MFT server connection sucessfull");
 		CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  MFT server connection sucessfull" + CommonSharedConstants.newLine);
 		}
 		catch(Exception e) {
-			System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  MFT server connection failed");
+			log.info("MFT server connection failed");
 			e.printStackTrace();
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  MFT server connection failed" + commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
 		}
-		//System.out.println("Checking File : " + checkFile);
+		//log.info("Checking File : " + checkFile);
 		if(files.size()>0)
-		checkFile = true;
-		
-		sftp.closeConnections();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + commonUtils.exceptionMsgToString(e1) + CommonSharedConstants.newLine);
+			checkFile = true;
+
+		}
+		catch(JSchException e) {
+			log.error("Connection Error to sftp while checking Text File Existence");
+			e.printStackTrace();
+			CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
+		} finally {
+			try {
+				sftp.closeConnections();
+			} catch (IOException e1) {
+				CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + commonUtils.exceptionMsgToString(e1) + CommonSharedConstants.newLine);
+			}
 		}
     	return files;
     }
@@ -117,14 +130,19 @@ public class sftpUtils {
     		sftp = new sftpFileConnection(sftpBean);
     		sftp.getChannelSftp();
     		status = sftp.downloadFile(remoteFilePath);    		
-    		sftp.closeConnections();
-    		
+
     	}
     	catch(Exception e) {
     		e.printStackTrace();
     		CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
     		return false;
-    	}
+    	}finally {
+			try {
+				sftp.closeConnections();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
     	return status;
     }
 
@@ -140,25 +158,37 @@ public class sftpUtils {
     		
     	}
     	catch(Exception e) {
+			log.info("Error : Connection Error to sftp while deleting "+remoteFilePath);
     		e.printStackTrace();
     		CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
     		return false;
-    	}
+    	}finally {
+			try {
+				sftp.closeConnections();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
     	return status;
     }
     
-    public boolean downloadInputDirectory() throws SftpException, IOException {
+    public boolean downloadInputDirectory() throws SftpException {
 		try{
-			sftp = new sftpFileConnection(sftpBean);
+		sftp = new sftpFileConnection(sftpBean);
 		sftp.getChannelSftp();
 		//String downloadPath = new File(propBean.getTextFilePath()).getParent();
 		sftp.downloadFromFolder1(FileUtil.removeFileNameFromLinuxPath(propBean.getTextFilePath()));
-		sftp.closeConnections();
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 			CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
 			return false;
+		}finally {
+			try {
+				sftp.closeConnections();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return true;
     }
@@ -167,8 +197,6 @@ public class sftpUtils {
     	BufferedReader bufferedReader = null;
     	boolean statusFlag = false;
     	try {
-    		
-    		
     		if(isFolderExist(filePath)) {
     		
     		sftp = new sftpFileConnection(sftpBean);
@@ -187,14 +215,13 @@ public class sftpUtils {
 		}
     	
     	catch (Exception e) {
-    		
     		e.printStackTrace();
     		CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
     		statusFlag = false;
 		}
     	finally {
     		if(bufferedReader!=null)
-             bufferedReader.close();
+             	bufferedReader.close();
 
     		sftp.closeConnections();
 
@@ -207,11 +234,16 @@ public class sftpUtils {
 	    	sftp = new sftpFileConnection(sftpBean);
 			sftp.getChannelSftp();
 			sftp.createDir(path);
-			sftp.closeConnections();
     	}
     	catch(Exception e) {
     		return false;
-    	}
+    	}finally {
+			try {
+				sftp.closeConnections();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
     	return true;
     }
     
@@ -220,12 +252,17 @@ public class sftpUtils {
 	    	sftp = new sftpFileConnection(sftpBean);
 			sftp.getChannelSftp();
 			sftp.uploadFiles(inputPath, destPath);
-			sftp.closeConnections();
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  File : " + inputPath + " Uploaded to " + destPath + CommonSharedConstants.newLine);
     	}
     	catch(Exception e) {
     		return false;
-    	}
+    	}finally {
+			try {
+				sftp.closeConnections();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
     	return true;
     }
 }

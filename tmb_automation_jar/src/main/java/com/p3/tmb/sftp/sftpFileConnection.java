@@ -6,6 +6,8 @@ import com.p3.tmb.beans.sftpBean;
 import com.p3.tmb.commonUtils.FileUtil;
 import com.p3.tmb.commonUtils.commonUtils;
 import com.p3.tmb.constant.CommonSharedConstants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -28,6 +30,8 @@ public class sftpFileConnection {
 	private ChannelSftp channelSftp = null;
 	private BufferedReader br = null;
 
+	final Logger log = LogManager.getLogger(sftpFileConnection.class.getName());
+
 
 	public sftpFileConnection(sftpBean sftpBean) {
 		this.USERNAME = sftpBean.getUserName();
@@ -48,8 +52,7 @@ public class sftpFileConnection {
 //		sftp.fetchFile();
 //	}
 	
-	public ChannelSftp getChannelSftp() {
-		try {
+	public ChannelSftp getChannelSftp() throws JSchException {
 			 JSch jsch = new JSch();
 			 
 	            jschSession = jsch.getSession(USERNAME, REMOTE_HOST, REMOTE_PORT);
@@ -69,17 +72,14 @@ public class sftpFileConnection {
 	           // sftp.connect(CHANNEL_TIMEOUT);
 
 	            channelSftp = (ChannelSftp) sftp;
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-			CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
-		}
 		return channelSftp;
 	}
 	
 	public void closeConnections() throws IOException {
-		if(channelSftp!=null)
-		channelSftp.exit();
+		if(channelSftp!=null) {
+			channelSftp.exit();
+			channelSftp.disconnect();
+		}
 		if (jschSession != null) {
           jschSession.disconnect();
       }		
@@ -132,7 +132,8 @@ public BufferedReader getFileBufferReader(String filePath) {
 		}
 		catch(Exception e) {
 			e.printStackTrace();
-			CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
+			log.error("Error while transferring "+inputFilePath+" to sFTP server - Please refer Archon server for the file ");
+			CommonSharedConstants.logContent.append(commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine + "Error while transferring "+inputFilePath+" to sFTP server - Please refer Archon server for the file ");
 			return false;
 		}
 		return true;
@@ -187,7 +188,7 @@ public BufferedReader getFileBufferReader(String filePath) {
 	
 	public void downloadFromFolder(String folder) throws SftpException {
         Vector<ChannelSftp.LsEntry> entries = channelSftp.ls(folder);
-        System.out.println(entries);
+        log.info(entries);
 
         //download all from root folder
         for (ChannelSftp.LsEntry en : entries) {
@@ -196,7 +197,7 @@ public BufferedReader getFileBufferReader(String filePath) {
                 continue;
             }
 
-            System.out.println(en.getFilename());
+            log.info(en.getFilename());
             channelSftp.get(folder + en.getFilename(), en.getFilename());
         }
         
@@ -254,7 +255,7 @@ public BufferedReader getFileBufferReader(String filePath) {
 //                  is.close();
 //              }
 
-			// System.out.println("Read File : \n" + readFile(is));
+			// log.info("Read File : \n" + readFile(is));
 
 			channelSftp.exit();
 
@@ -268,7 +269,7 @@ public BufferedReader getFileBufferReader(String filePath) {
 				jschSession.disconnect();
 			}
 		}
-		System.out.println("Done");
+		log.info("Done");
 
 	}
 
@@ -340,7 +341,7 @@ public BufferedReader getFileBufferReader(String filePath) {
 		        	String fileName = entry.getFilename();
 		        	channelSftp.get(folder + "/" + fileName, LOCAL_FILE_PATH + File.separator + CommonSharedConstants.INPUT_BACKUP_DIRECTORY);
 //		        	CommonSharedConstants.logContent.append("File downloaded to : " + (LOCAL_FILE_PATH + File.separator + CommonSharedConstants.INPUT_BACKUP_DIRECTORY + "\\" + fileName + CommonSharedConstants.newLine));
-//		        	System.out.println("File downloaded to : " + (LOCAL_FILE_PATH + File.separator + CommonSharedConstants.INPUT_BACKUP_DIRECTORY+fileName));
+//		        	log.info("File downloaded to : " + (LOCAL_FILE_PATH + File.separator + CommonSharedConstants.INPUT_BACKUP_DIRECTORY+fileName));
 //		        	if(!fileName.equals(CommonSharedConstants.folderProp))
 //		        	channelSftp.rm(folder + "/" + fileName);
 		           //ret.add(entry.getFilename());

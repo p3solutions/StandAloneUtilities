@@ -12,6 +12,8 @@ package com.p3.tmb.commonUtils;
 import com.p3.tmb.constant.CommonSharedConstants;
 import com.p3.tmb.ingester.beans.ingesterInputBean;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -36,6 +38,8 @@ public class CommandLineProcess {
 	public String errorlog;
 	public String outputlog;
 	public String uuid;
+
+	final Logger log = LogManager.getLogger(CommandLineProcess.class.getName());
 
 	public CommandLineProcess(ingesterInputBean inputargs) {
 		this.inputargs = inputargs;
@@ -81,18 +85,18 @@ public class CommandLineProcess {
 				newCommand += sep + command[i];
 				sep = " ";
 			}
-			System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Running command =  ('" + newCommand + "')");
+			log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Running command =  ('" + newCommand + "')");
 
 			// Now run the process
 			Process p;
 			if (fileDirectoryToRunCommand != null) {
-				System.out.println(
+				log.info(
 						"Running command at File Directory = '" + fileDirectoryToRunCommand.getAbsolutePath() + "'");
 				p = Runtime.getRuntime().exec(command, null, fileDirectoryToRunCommand);
 			} else {
 				p = Runtime.getRuntime().exec(command);
 			}
-			System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Process has beean successfully completed.");
+			log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Process has beean successfully completed.");
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Process has beean successfully completed." + CommonSharedConstants.newLine);
 			outputLogFile = new File(outputlog).getAbsolutePath();
 			// any error or output messages
@@ -104,15 +108,15 @@ public class CommandLineProcess {
 			outputGobbler.start();
 			int exitVal = p.waitFor();
 			if (exitVal != 0) {
-				System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Return value error occurred. Value = " + exitVal);
+				log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Return value error occurred. Value = " + exitVal);
 				CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Return value error occurred. Value = " + exitVal + CommonSharedConstants.newLine);
 				return false;
 			}
-			System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Return value of process is " + exitVal);
+			log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Return value of process is " + exitVal);
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Return value of process is " + exitVal + CommonSharedConstants.newLine);
 			return true;
 		} catch (Exception e) {
-			System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  An Error has occurred = " + e.getMessage());
+			log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  An Error has occurred = " + e.getMessage());
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  An Error has occurred = " + commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
 			throw new Exception("An Error has occurred: " + e.getMessage(), e);
 		}
@@ -135,14 +139,14 @@ public class CommandLineProcess {
 			// Now run the process
 			Process p;
 			if (fileDirectoryToRunCommand != null) {
-				System.out.println(
+				log.info(
 						"Running command at File Directory = '" + fileDirectoryToRunCommand.getAbsolutePath() + "'");
 				p = Runtime.getRuntime().exec(command, null, fileDirectoryToRunCommand);
 			} else {
 				p = Runtime.getRuntime().exec(command);
 			}
 
-			System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Process has beean successfully completed.");
+			log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Process has beean successfully completed.");
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Process has beean successfully completed." + CommonSharedConstants.newLine);
 
 			outputLogFile = new File(outputlog).getAbsolutePath();
@@ -156,15 +160,15 @@ public class CommandLineProcess {
 			outputGobbler.start();
 			int exitVal = p.waitFor();
 			if (exitVal != 0) {
-				System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Return value error occurred. Value = " + exitVal);
+				log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Return value error occurred. Value = " + exitVal);
 				CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Return value error occurred. Value = " + exitVal + CommonSharedConstants.newLine);
 				return false;
 			}
-			System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Return value of process is " + exitVal);
+			log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Return value of process is " + exitVal);
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Return value of process is " + exitVal + CommonSharedConstants.newLine);
 			return true;
 		} catch (Exception e) {
-			System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  An Error has occurred = " + e.getMessage());
+			log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  An Error has occurred = " + e.getMessage());
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  An Error has occurred = " + commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
 			throw new Exception( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  An Error has occurred: " + e.getMessage(), e);
 		}
@@ -199,6 +203,8 @@ class CommandLineStream extends Thread {
 
 	public final static String CRLF = "" + CR + LF;
 	String parentSourcePath;
+
+	final Logger log = LogManager.getLogger(CommandLineProcess.class.getName());
 
 	CommandLineStream(InputStream is, String type, String file, Process p, String checkline, ingesterInputBean inputargs) {
 		this.path = inputargs.getDataPath();
@@ -244,7 +250,7 @@ class CommandLineStream extends Thread {
 						this.out.write(CRLF);
 						this.out.write(CRLF);
 						this.out.write(CRLF);
-						System.err.println("\nUnable to find the specified Application. Please check application name");
+						log.error("\nUnable to find the specified Application. Please check application name");
 						CommonSharedConstants.logContent.append("\nUnable to find the specified Application. Please check application name"+CommonSharedConstants.newLine);
 						this.out.write("\nPlease check application name.");
 						CommonSharedConstants.logContent.append("\nPlease check application name."+CommonSharedConstants.newLine);
@@ -268,11 +274,11 @@ class CommandLineStream extends Thread {
 						this.out.write(line.contains("(Permission denied)") ? "\nPermission unavailable"
 								: "\nCredentials are invalid");
 						this.out.write(CRLF);
-						System.out.println(line.contains("(Permission denied)") ? "\nPermission unavailable"
+						log.info(line.contains("(Permission denied)") ? "\nPermission unavailable"
 								: "\nCredentials are invalid");
 						CommonSharedConstants.logContent.append(line.contains("(Permission denied)") ? "\nPermission unavailable"
 								: "\nCredentials are invalid"+CommonSharedConstants.newLine);
-						System.err.println(line.contains("(Permission denied)") ? "\nPermission unavailable"
+						log.error(line.contains("(Permission denied)") ? "\nPermission unavailable"
 								: "\nCredentials are invalid");
 						out.flush();
 						out.close();
@@ -308,7 +314,7 @@ class CommandLineStream extends Thread {
 									FileUtils.moveFile(new File(file), new File(parentSourcePath + File.separator
 											+ "INGESTION_FAILED" + File.separator + new File(file).getName()));
 								} catch (Exception e) {
-									System.out.println(
+									log.info(
 											"Unable to move '" + file + "' to " + "INGESTION_FAILED directory");
 									CommonSharedConstants.logContent.append("Unable to move '" + file + "' to " + "INGESTION_FAILED directory" +CommonSharedConstants.newLine);
 									e.printStackTrace();
@@ -345,7 +351,7 @@ class CommandLineStream extends Thread {
 									FileUtil.checkCreateDirectory(
 											parentSourcePath + File.separator + "INGESTION_SUCCESS");
 									if (line.startsWith("Ingested file with attachments:")) {
-										System.out.println("Starting to move the blob data");
+										log.info("Starting to move the blob data");
 										CommonSharedConstants.logContent.append("Starting to move the blob data" +CommonSharedConstants.newLine);
 										if (!sipIngestion)
 											moveBlobFile(new File(file), true, parentSourcePath);
@@ -355,7 +361,7 @@ class CommandLineStream extends Thread {
 											new File(parentSourcePath + File.separator + "INGESTION_SUCCESS"
 													+ File.separator + new File(file).getName() + ".ingested"));
 								} catch (Exception e) {
-									System.out.println(
+									log.info(
 											"Unable to move '" + file + "' to " + "INGESTION_SUCCESS directory");
 									CommonSharedConstants.logContent.append("Unable to move '" + file + "' to " + "INGESTION_SUCCESS directory"+CommonSharedConstants.newLine);
 									e.printStackTrace();
@@ -370,7 +376,7 @@ class CommandLineStream extends Thread {
 				out.close();
 			} else
 				while ((line = br.readLine()) != null)
-					System.out.println(type + ">" + line);
+					log.info(type + ">" + line);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 			CommonSharedConstants.logContent.append("Exception in CommandLineProcess run : " + commonUtils.exceptionMsgToString(ioe) + CommonSharedConstants.newLine);
@@ -379,7 +385,7 @@ class CommandLineStream extends Thread {
 
 	private void moveBlobFile(File xmlFile, boolean sucess, String parentSourcePath)
 			throws IOException, XMLStreamException {
-		System.out.println("Processing xml file " + xmlFile + " with blob reference.");
+		log.info("Processing xml file " + xmlFile + " with blob reference.");
 		String moveDir = "";
 		File path = new File(xmlFile.getParent());
 		XMLInputFactory factory = null;
@@ -423,9 +429,9 @@ class CommandLineStream extends Thread {
 								FileUtil.checkCreateDirectory(srcFilePath.getParent() + File.separator + moveDir);
 								FileUtils.moveFile(srcFilePath, new File(srcFilePath.getParent() + File.separator
 										+ moveDir + File.separator + srcFilePath.getName()));
-								System.out.println("Moved '" + srcFilePath + "' to " + moveDir + " directory");
+								log.info("Moved '" + srcFilePath + "' to " + moveDir + " directory");
 							} else {
-								System.out.println("Failed to move as this file is part of source dir");
+								log.info("Failed to move as this file is part of source dir");
 							}
 
 						} catch (Exception e) {
@@ -450,9 +456,9 @@ class CommandLineStream extends Thread {
 								FileUtil.checkCreateDirectory(srcFilePath.getParent() + File.separator + moveDir);
 								FileUtils.moveFile(srcFilePath, new File(srcFilePath.getParent() + File.separator
 										+ moveDir + File.separator + srcFilePath.getName()));
-								System.out.println("Moved '" + srcFilePath + "' to " + moveDir + " directory");
+								log.info("Moved '" + srcFilePath + "' to " + moveDir + " directory");
 							} else {
-								System.out.println("Failed to move as this file is part of source dir");
+								log.info("Failed to move as this file is part of source dir");
 							}
 						} catch (Exception e) {
 							System.out
@@ -469,16 +475,16 @@ class CommandLineStream extends Thread {
 						} catch (Exception e) {
 							continue;
 						}
-						System.out.println("srcFilePath => " + srcFilePath);
+						log.info("srcFilePath => " + srcFilePath);
 						try {
 							if (srcFilePath.exists()) {
 
 								FileUtil.checkCreateDirectory(parentSourcePath + File.separator + moveDir);
 								FileUtils.moveFile(srcFilePath,
 										new File(parentSourcePath + File.separator + moveDir + File.separator + ref));
-								System.out.println("Moved '" + srcFilePath + "' to " + moveDir + " directory");
+								log.info("Moved '" + srcFilePath + "' to " + moveDir + " directory");
 							} else {
-								System.out.println("Failed to move as this file is part of source dir");
+								log.info("Failed to move as this file is part of source dir");
 							}
 						} catch (Exception e) {
 							System.out

@@ -2,6 +2,8 @@ package com.p3.tmb.ingester.process;
 
 import com.p3.tmb.commonUtils.commonUtils;
 import com.p3.tmb.constant.CommonSharedConstants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
@@ -19,7 +21,8 @@ import java.util.Map;
 public class IngestFileHandler {
 
 	private String outputPath;
-	
+	final Logger log = LogManager.getLogger(IngestFileHandler.class.getName());
+
 	public IngestFileHandler(String outputpath) {
 		this.outputPath = outputpath;
 	}
@@ -178,7 +181,7 @@ public class IngestFileHandler {
 
 			outobj.write(format(sb.toString()));
 			outobj.close();
-			System.out.println("response file created----->" + file.getAbsolutePath());
+			log.info("response file created----->" + file.getAbsolutePath());
 			CommonSharedConstants.logContent.append("response file created----->" + file.getAbsolutePath() + CommonSharedConstants.newLine);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -242,7 +245,7 @@ public class IngestFileHandler {
 			}
 		}
 
-		System.out.println("Ingestion Response File Creation Started");
+		log.info("Ingestion Response File Creation Started");
 		String newOutputPath = outputPath + File.separator + "Ingestion_Response" + ".xml";
 		Writer writer = new OutputStreamWriter(new FileOutputStream(newOutputPath));
 		writer.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n");
@@ -268,7 +271,7 @@ public class IngestFileHandler {
 		writer.flush();
 		writer.close();
 
-		System.out.println("Ingestion Response File Creation Completed");
+		log.info("Ingestion Response File Creation Completed");
 
 	}
 

@@ -1,15 +1,19 @@
 package com.p3.tmb.commonUtils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.iv.NoIvGenerator;
 
 public class encryptionUtils {
-		private static String encryptionPassword = "UEFUSUVOVDNTSVhUWSAocDM2MCk=";
+
+	final Logger log = LogManager.getLogger(encryptionUtils.class.getName());
+	private static String encryptionPassword = "UEFUSUVOVDNTSVhUWSAocDM2MCk=";
 		private static String encryptionAlgorithm = "PBEWithMD5AndDES";
 		
 //		public static void main(String[] args) {
 //			String password = "Secret@123";
-//			System.out.println(new EncryptionUtils().encryptor(password));
+//			log.info(new EncryptionUtils().encryptor(password));
 //			}
 
 		public static String decryptor(String encryptedValue) {

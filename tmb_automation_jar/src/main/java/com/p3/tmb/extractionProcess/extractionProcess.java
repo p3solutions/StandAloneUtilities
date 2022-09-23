@@ -56,7 +56,7 @@ public class extractionProcess {
 
 	public void startExtraction() throws Exception {
 		try {
-			System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Extraction Started");
+			log.info("Extraction Started");
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Extraction Started" + CommonSharedConstants.newLine);
 		PdiSchemaGeneration pdiObj = new PdiSchemaGeneration(propBean);
 		pdiObj.startPdiSchema(propBean.getTableName(), propBean.getHolding(), startProcessingFile());
@@ -71,42 +71,45 @@ public class extractionProcess {
 		CommonSharedConstants.desBlobCount = desBlobCount;
 		//CommonSharedConstants.jobProcessTime = TimeUnit.MILLISECONDS.toMillis(new Date(CommonSharedConstants.jobStartDateTime).getTime() - new Date(CommonSharedConstants.jobEndDateTime).getTime());
 		extractionReportGenerator report = new extractionReportGenerator(propBean, sftpBean);
-		System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Extraction Completed");
+		log.info("Extraction Completed");
 		CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Extraction Completed" + CommonSharedConstants.newLine);
 		report.generateDataExtractionReport();
 		}
 		catch(Exception e) {
-			System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Extraction Failed");
+			log.info("Extraction Failed");
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Extraction Failed " + commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
 			e.printStackTrace();
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
 		
 		}
 		try {
-			System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Ingestion Started");
+			log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Ingestion Started");
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Ingestion Started" + CommonSharedConstants.newLine);
 			startIngestionProcess();
-//			System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + ":  Ingestion Completed");
+//			log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + ":  Ingestion Completed");
 //			CommonSharedConstants.logContent.append("Ingestion Completed : " + CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + CommonSharedConstants.newLine);
 		}
 		catch(Exception e) {
-//			System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + ":  Ingestion Failed");
+			log.error("Ingestion Failed");
 //			CommonSharedConstants.logContent.append("Ingestion Failed : " + CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + CommonSharedConstants.newLine);
 			e.printStackTrace();
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + commonUtils.exceptionMsgToString(e) + CommonSharedConstants.newLine);
 		}
 		//zipUtils zipObj = new zipUtils(propBean.getOutputLocation());
 		//zipObj.startZip();
-		sftp = new sftpFileConnection(sftpBean);
-		sftp.getChannelSftp();
-		//sftp.uploadFiles(zipObj.startZip(), propBean.getServerBackupPath());
-		File outputDir = new File(propBean.getOutputLocation());
-		File[] fileList = outputDir.listFiles();
-		for(File f : fileList) {
-			if(FileUtil.getExtension(f.getName()).equalsIgnoreCase(".pdf"))
-				sftp.uploadFiles(f.getAbsolutePath(), propBean.getPdfLocation());
+		try {
+			sftp = new sftpFileConnection(sftpBean);
+			sftp.getChannelSftp();
+			//sftp.uploadFiles(zipObj.startZip(), propBean.getServerBackupPath());
+			File outputDir = new File(propBean.getOutputLocation());
+			File[] fileList = outputDir.listFiles();
+			for (File f : fileList) {
+				if (FileUtil.getExtension(f.getName()).equalsIgnoreCase(".pdf"))
+					sftp.uploadFiles(f.getAbsolutePath(), propBean.getPdfLocation());
+			}
+		}finally {
+			sftp.closeConnections();
 		}
-		sftp.closeConnections();
 		String deletePath = (propBean.getOutputLocation() + File.separator + "TEMP");
 		FileUtil.deleteDirectory(deletePath);
 		String deleteZipFile = (propBean.getOutputLocation() + File.separator + FileUtil.getFileNameFromPath(propBean.getOutputLocation())+".zip");
@@ -139,7 +142,7 @@ public class extractionProcess {
 				if (columnFlag) {
 //					String[] columns = propBean.getColumnNames().split(",");
 					String[] columns = CommonSharedConstants.columnNames.split(",");
-//					System.out.println("Columns :" + columns);
+//					log.info("Columns :" + columns);
 					columnBean colBean = new columnBean();
 					columnDetailList.add(colBean);
 					for (String column : columns) {
@@ -292,7 +295,7 @@ public class extractionProcess {
 //			Date dateFormat = inputFormat.parse(inputDate);
 //			SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
 //			outDate = outputFormat.format(dateFormat);
-//			// System.out.println("output date:"+outDate);
+//			// log.info("output date:"+outDate);
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
@@ -308,7 +311,7 @@ public class extractionProcess {
 //				SimpleDateFormat outputFormat = new SimpleDateFormat("MM/dd/yyyy");
 //				outDate = outputFormat.format(dateFormat);
 //			}
-//			// System.out.println("output date:"+outDate);
+//			// log.info("output date:"+outDate);
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
@@ -341,7 +344,7 @@ public class extractionProcess {
 			buffer.append("  </" + tableName + "_ROW>\n");
 			String blobPath = fileName == null ? "" : propBean.getOutputLocation()+File.separator+CommonSharedConstants.INPUT_BACKUP_DIRECTORY + File.separator + fileName;
 			File sf = new File(blobPath);
-//			System.out.println("path:" + sf.getParent() + "value:" + fileName);
+//			log.info("path:" + sf.getParent() + "value:" + fileName);
 			ArrayList<String> blobsAttachment = new ArrayList<String>();
 
 			if (sf.exists()) {
@@ -370,7 +373,7 @@ public class extractionProcess {
 		}
 
 		sipCreator.getBatchAssembler().end();
-		System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  SIP package created");
+		log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  SIP package created");
 		CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  SIP package created" + CommonSharedConstants.newLine);
 	}
 	

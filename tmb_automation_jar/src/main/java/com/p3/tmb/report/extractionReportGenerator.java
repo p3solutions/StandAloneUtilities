@@ -10,6 +10,8 @@ import com.p3.tmb.beans.sftpBean;
 import com.p3.tmb.commonUtils.FileUtil;
 import com.p3.tmb.constant.CommonSharedConstants;
 import com.p3.tmb.sftp.sftpUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.*;
@@ -23,7 +25,8 @@ public class extractionReportGenerator {
 	private StringBuffer sb_DE = new StringBuffer();
 	private propertyBean propBean;
 	private sftpBean sftpBean = null;
-	sftpUtils sftpUtils = null;  
+	sftpUtils sftpUtils = null;
+	final Logger log = LogManager.getLogger(extractionReportGenerator.class.getName());
 	
 	public extractionReportGenerator(propertyBean propBean, sftpBean sftpBean) {
 	 this.propBean = propBean;
@@ -50,7 +53,7 @@ public class extractionReportGenerator {
 			sb_DE.append("<h2>MISSING BLOB FILE INFO:</h2>");
 			createValidationMissingBlobFile(sb_DE, missingBlobFiles, FileUtil.getFileNameFromLinuxPath(propBean.getTextFilePath()));
 		} catch (Exception e) {
-			System.err.println("Exception while generating validation report.." + e.getMessage());
+			log.error("Exception while generating validation report.." + e.getMessage());
 			e.printStackTrace();
 		} finally {
 			sb_DE = createFooter(sb_DE, new Object[] { timeDiff(new Date().getTime() - CommonSharedConstants.jobStartTime) },
@@ -91,7 +94,7 @@ public class extractionReportGenerator {
 			sb_DE = createBlobData(sb_DE, 1);
 			sb_DE=createBlobTable(sb_DE, null, false);
 		} catch (Exception e) {
-			System.err.println("Exception while generating extraction report.." + e.getMessage());
+			log.error("Exception while generating extraction report.." + e.getMessage());
 			e.printStackTrace();
 		} finally {
 			sb_DE = createFooter(sb_DE, new Object[] { timeDiff(new Date().getTime() - CommonSharedConstants.jobStartTime) },
@@ -348,15 +351,15 @@ public class extractionReportGenerator {
 //			FileUtils.forceDeleteOnExit(new File(tempfile));
 			FileUtil.deleteFile(inputfile);
 			FileUtil.deleteFile(tempfile);
-			System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  PDF report created at " + finalfile );
+			log.info("PDF report created at " + finalfile );
 			CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  PDF report created at " + finalfile + CommonSharedConstants.newLine );
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		finally {
 			if(finalfile != null) {
-//				System.out.println("Final file :" + finalfile);
-//				System.out.println("PDF : " + propBean.getPdfLocation());
+//				log.info("Final file :" + finalfile);
+//				log.info("PDF : " + propBean.getPdfLocation());
 				sftpUtils.uploadFile(finalfile, propBean.getPdfLocation());
 			}
 		}

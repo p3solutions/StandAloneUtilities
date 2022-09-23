@@ -3,6 +3,8 @@ package com.p3.tmb.core.sip;
 import com.p3.tmb.beans.propertyBean;
 import com.p3.tmb.commonUtils.FileUtil;
 import com.p3.tmb.constant.CommonSharedConstants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,6 +16,8 @@ import java.util.Map;
 
 
 public class PdiSchemaGeneration {
+
+	final Logger log = LogManager.getLogger(PdiSchemaGeneration.class.getName());
 
 	private propertyBean propBean;
 	private String schemaName;
@@ -85,7 +89,7 @@ public class PdiSchemaGeneration {
 		out.write("\n</xs:schema>");
 		out.flush();
 		out.close();
-		System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  PDI schema file created");
+		log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  PDI schema file created");
 		CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  PDI schema file created at " + MetaDataFolderPath + CommonSharedConstants.newLine);
 	}
 
@@ -157,7 +161,7 @@ public class PdiSchemaGeneration {
 
 //	public void setValuesIntoTableBean(File file) throws NotesException, Exception {
 //
-//		System.out.println(file);
+//		log.info(file);
 //		columnBean columnBean = null;
 //		List<columnBean> columnList = null;
 //

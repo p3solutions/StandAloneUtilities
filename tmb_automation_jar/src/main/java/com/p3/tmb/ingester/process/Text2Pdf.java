@@ -8,6 +8,8 @@ import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.p3.tmb.commonUtils.FileUtil;
 import com.p3.tmb.constant.CommonSharedConstants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.sql.Timestamp;
@@ -15,6 +17,7 @@ import java.util.Date;
 
 public class Text2Pdf {
 
+	final Logger log = LogManager.getLogger(Text2Pdf.class.getName());
 	private static final Rectangle Rectangle = new Rectangle(900, 1200);
 
 	@SuppressWarnings("deprecation")
@@ -28,7 +31,7 @@ public class Text2Pdf {
 		Document document = new Document(Rectangle, left, right, top, bottom);
 		String tempReport = yourreport + "temp";
 		File dest = new File(tempReport);
-		System.out.println(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  "+ dest);
+		log.info(""+ dest);
 		dest.createNewFile(); // if file already exists will do nothing
 
 		FileOutputStream oFile = new FileOutputStream(dest, false);

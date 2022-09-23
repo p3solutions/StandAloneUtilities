@@ -10,6 +10,8 @@ import com.p3.tmb.ingester.process.IngestFileHandler;
 import com.p3.tmb.ingester.process.Text2Pdf;
 import com.p3.tmb.ingester.process.scriptMaker;
 import com.p3.tmb.sftp.sftpUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -50,7 +52,8 @@ public class ingesterProcess {
 	private sftpUtils sftpUtils = null;
 	private String pdfPath = null;
 	private String reportDateTime = null;
-	
+	final Logger log = LogManager.getLogger(ingesterProcess.class.getName());
+
 	public ingesterProcess(ingesterInputBean inputArgs, sftpUtils sftpUtils, String pdfPath, String reportDateTime) {
 		this.ingesterInputArgs = inputArgs;
 		ingesterInputArgs.decryptor();
@@ -67,8 +70,8 @@ public class ingesterProcess {
 					+ ingesterInputArgs.getReportId() + ".check";
 			String scriptRunnerPath = FileUtil.createTempFolder() + "scriptRunner_"
 					+ ingesterInputArgs.getReportId() + (OSIdentifier.checkOS() ? ".bat" : ".sh");
-			System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  "+ scriptPath);
-			System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  "+ scriptRunnerPath);
+			log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  "+ scriptPath);
+			log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  "+ scriptRunnerPath);
 			scriptMaker sm = new scriptMaker(ingesterInputArgs);
 			sm.createScript(scriptPath);
 			sm.createScriptRunner(scriptRunnerPath, scriptPath);
@@ -91,14 +94,14 @@ public class ingesterProcess {
 			ingestionStatus = checkLog(clp.outputlog);
 			boolean failStatus = false;
 			if (ingestionStatus.startsWith("<p>Ingestion Completed Successfully.</p>")) {
-				System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Ingestion report generated at " + destReport);
+				log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Ingestion report generated at " + destReport);
 				CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Ingestion report generated at " + destReport + CommonSharedConstants.newLine);
-				System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Ingestion completed");
+				log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Ingestion completed");
 				CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Ingestion completed " + CommonSharedConstants.newLine);
 			} else {
-				System.out.println( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + ":  Ingestion Failed " + ingestionStatus);
+				log.info( CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + ":  Ingestion Failed " + ingestionStatus);
 				CommonSharedConstants.logContent.append(CommonSharedConstants.sdf3.format(new Timestamp(System.currentTimeMillis())) + "  Ingestion Failed " +ingestionStatus + CommonSharedConstants.newLine);
-				System.err.println(ingestionStatus);
+				log.error(ingestionStatus);
 		
 				failStatus = true;
 				// throw new Exception("Ingestion Failed " + ingestionStatus);
