@@ -97,7 +97,7 @@ public class Text2Pdf {
 
 		PdfReader pdfReader = new PdfReader(tempReport);
 		PdfStamper pdfStamper = new PdfStamper(pdfReader, new FileOutputStream(new File(yourreport)));
-		Image image = Image.getInstance("archon.png");
+		Image image = Image.getInstance(getClass().getResource("/archon.png"));
 		image.scaleToFit(300f, 300f);
 		image.setAbsolutePosition(600f, 20f);
 		for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {

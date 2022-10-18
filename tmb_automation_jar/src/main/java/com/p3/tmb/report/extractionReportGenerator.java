@@ -335,7 +335,7 @@ public class extractionReportGenerator {
 			PdfReader pdfReader = new PdfReader(is);
 			FileOutputStream fileOutputStream = new FileOutputStream(new File(finalfile));
 			PdfStamper pdfStamper = new PdfStamper(pdfReader, fileOutputStream);
-			Image image = Image.getInstance("archon.png");
+			Image image = Image.getInstance(getClass().getResource("/archon.png"));
 			image.scaleToFit(300f, 300f);
 			image.setAbsolutePosition(950f, 20f);
 			for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {
